@@ -1,0 +1,26 @@
+# 构建产物
+/entry/build
+/build
+/oh_modules
+/entry/oh_modules
+node_modules
+
+# IDE / 本机配置
+/.idea
+/.hvigor
+/local.properties
+/.clang-format
+/.clang-tidy
+
+# 签名与敏感材料（私钥绝不能入库）
+/上架材料/APPCerts
+*.p12
+*.cer
+*.p7b
+*.jks
+*.csr
+
+# 系统杂项
+.DS_Store
+*.log
+EOF

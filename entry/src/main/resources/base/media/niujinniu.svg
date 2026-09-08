@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 二十八星宿图鉴 · 牛金牛
+     画布 600x600；所有坐标相对于 viewBox。
+     风格：朱砂边框 + 米黄卷轴 + 圆形牌饰 + 工笔淡墨 + 楷书题款。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" font-family="'STKaiti','KaiTi','楷体','Songti SC','SimSun',serif">
+  <defs>
+    <radialGradient id="medallion" cx="50%" cy="48%" r="58%">
+      <stop offset="0%"  stop-color="#fbf2d6"/>
+      <stop offset="70%" stop-color="#f1e2b6"/>
+      <stop offset="100%" stop-color="#d9c489"/>
+    </radialGradient>
+    <linearGradient id="vermilion" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#7a1f15"/>
+      <stop offset="100%" stop-color="#a8362a"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#d8b25a"/>
+      <stop offset="100%" stop-color="#a17a30"/>
+    </linearGradient>
+    <filter id="paperGrain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7"/>
+      <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.30  0 0 0 0 0.18  0 0 0 0.10 0"/>
+    </filter>
+    <symbol id="cornerCloud" viewBox="0 0 60 60">
+      <path d="M2 30 Q10 18 22 22 Q26 8 40 14 Q52 8 56 22 L56 36 Q48 30 40 36 Q30 28 22 36 Q12 32 2 38 Z"
+            fill="url(#cloud)" stroke="#7a5a22" stroke-width="0.8" opacity="0.9"/>
+    </symbol>
+  </defs>
+
+  <rect width="600" height="600" fill="#f5e9c4"/>
+  <rect width="600" height="600" filter="url(#paperGrain)" opacity="0.55"/>
+
+  <rect x="18" y="18" width="564" height="564" fill="none" stroke="url(#vermilion)" stroke-width="7" rx="14"/>
+  <rect x="32" y="32" width="536" height="536" fill="none" stroke="#7a1f15" stroke-width="1.4" rx="8"/>
+  <use href="#cornerCloud" x="36" y="36" width="60" height="60"/>
+  <use href="#cornerCloud" x="504" y="36" width="60" height="60" transform="translate(1064 0) scale(-1 1)"/>
+  <use href="#cornerCloud" x="36" y="504" width="60" height="60" transform="translate(0 1068) scale(1 -1)"/>
+  <use href="#cornerCloud" x="504" y="504" width="60" height="60" transform="translate(1064 1068) scale(-1 -1)"/>
+
+  <circle cx="300" cy="270" r="205" fill="url(#medallion)" stroke="#3a2618" stroke-width="3"/>
+  <circle cx="300" cy="270" r="197" fill="none"      stroke="#3a2618" stroke-width="0.9"/>
+  <circle cx="300" cy="270" r="190" fill="none"      stroke="#a17a30" stroke-width="0.6" stroke-dasharray="2 4" opacity="0.7"/>
+
+  <g opacity="0.85">
+    <path d="M180 130 Q210 110 245 122 Q260 100 295 112 Q310 92 340 110 Q360 98 388 120 Q420 112 420 140
+             Q420 152 405 152 Q380 156 360 148 Q335 158 305 148 Q280 158 250 148 Q220 156 200 148
+             Q180 150 180 140 Z"
+          fill="url(#cloud)" stroke="#7a5a22" stroke-width="1.2"/>
+    <path d="M225 122 q12 -10 26 0" fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M290 110 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M355 118 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+  </g>
+
+  <!-- ⑤ 主体：水牛（侧立四足，庞大弯角垂耳）居中于 (300, 280)，约占 360x300 -->
+  <g transform="translate(300 285)" stroke="#1d1308" fill="none"
+     stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- 短尾（带毛簇） -->
+    <g stroke-width="3" fill="#fbf2d6">
+      <path d="M  90  0
+               C 106 -6  118  0  118  12
+               C 118  20  108  24  100  18
+               C  94  14  92  10  90  0 Z"/>
+      <!-- 毛簇（穗状） -->
+      <g stroke-width="1.4">
+        <path d="M 118 12 l 4 8"/>
+        <path d="M 114 18 l 4 8"/>
+        <path d="M 110 22 l 2 10"/>
+      </g>
+    </g>
+
+    <!-- 后腿（远侧一对） -->
+    <g stroke-width="3.8" fill="#fbf2d6">
+      <path d="M  16 -10
+               C  22  10   20  30   28  50
+               L  66  50  L  66  10 Z"/>
+      <!-- 后蹄 -->
+      <path d="M 28 50 l -2 14 m -2 -2 l 0 2 M 40 50 l 0 14 m -2 -2 l 2 2 M 54 50 l 0 14 m -2 -2 l 4 0 M 64 50 l 4 14 m -2 -2 l 4 0"/>
+    </g>
+
+    <!-- 身躯（庞大厚实，方躯） -->
+    <path d="M -100  -8
+             C -110 -56  -50 -84   10 -80
+             C  60 -78   96 -56   92 -10
+             C  86  32   56  50    6  52
+             C -50  54 -90  36 -100 -8 Z"
+          stroke-width="4.4" fill="#fbf2d6"/>
+
+    <!-- 身躯上稀疏毛纹 -->
+    <g stroke-width="1.4" opacity="0.55">
+      <path d="M -60 -40 q 8 -8 16 0"/>
+      <path d="M -20 -60 q 8 -8 16 0"/>
+      <path d="M  20 -56 q 8 -8 16 0"/>
+      <path d="M  60 -36 q 8 -8 16 0"/>
+      <path d="M -50  20 q 8 -8 16 0"/>
+      <path d="M  -4  30 q 8 -8 16 0"/>
+      <path d="M  40  20 q 8 -8 16 0"/>
+    </g>
+
+    <!-- 前腿（近侧） -->
+    <g stroke-width="3.8" fill="#fbf2d6">
+      <path d="M -70 -10
+               C -76  10 -74  30 -82  52
+               L -46  52  L -46  10 Z"/>
+      <!-- 前蹄 -->
+      <path d="M -82 52 l -4 14 m -2 -2 l 0 2 M -70 52 l 0 14 m -2 -2 l 2 2 M -58 52 l 0 14 m -2 -2 l 4 0 M -48 52 l 4 14 m -2 -2 l 4 0"/>
+    </g>
+
+    <!-- 头部（左前方，低首凝视） -->
+    <g transform="translate(-86 -76)">
+      <!-- 头型（长方形牛面） -->
+      <path d="M -38  14
+               C -44 -10  -20 -28    8 -28
+               C  30 -28   44 -10   42  14
+               C  40  26   26  32    8  30
+               C  -8  32 -28  28  -38  14 Z"
+            stroke-width="3.6" fill="#fbf2d6"/>
+
+      <!-- 大弯角（左右各一，向外向上弧弯） -->
+      <g stroke-width="3.4" fill="#fbf2d6">
+        <!-- 左角 -->
+        <path d="M -28 -22
+                 C -54 -42  -68 -68  -64 -90
+                 C -60 -100  -52 -100  -50 -90
+                 C -46 -70  -34 -50  -22 -34 Z"/>
+        <!-- 右角 -->
+        <path d="M  22 -22
+                 C  48 -42   62 -68   58 -90
+                 C  54 -100  46 -100  44 -90
+                 C  40 -70   28 -50   16 -34 Z"/>
+      </g>
+      <!-- 角纹（横纹） -->
+      <g stroke-width="1.2" opacity="0.7">
+        <path d="M -32 -36 q -10 -8 -16 -22"/>
+        <path d="M -38 -50 q -10 -8 -16 -22"/>
+        <path d="M -44 -64 q -10 -8 -14 -22"/>
+        <path d="M  26 -36 q 10 -8 16 -22"/>
+        <path d="M  32 -50 q 10 -8 16 -22"/>
+        <path d="M  38 -64 q 10 -8 14 -22"/>
+      </g>
+
+      <!-- 大垂耳（两枚长椭圆） -->
+      <g stroke-width="3" fill="#fbf2d6">
+        <path d="M -28 -10
+                 C -38  0  -42  18  -34  26
+                 C -28  30  -22  22  -20  10
+                 C -18   2 -22  -6 -28 -10 Z"/>
+        <path d="M  22 -10
+                 C  32  0   36  18   28  26
+                 C  22  30   16  22   14  10
+                 C  12  2   16  -6  22 -10 Z"/>
+      </g>
+      <!-- 耳内纹 -->
+      <g stroke-width="1" opacity="0.6">
+        <path d="M -32 0 q 4 8 0 16"/>
+        <path d="M -28 4 q 4 8 0 16"/>
+        <path d="M  26 0 q -4 8 0 16"/>
+        <path d="M  22 4 q -4 8 0 16"/>
+      </g>
+
+      <!-- 眉骨 -->
+      <path d="M -16 -6 q 8 -4 16 0" stroke-width="2"/>
+      <path d="M  10 -6 q 8 -4 16 0" stroke-width="2"/>
+
+      <!-- 眼（温和大眼） -->
+      <circle cx="-8"  cy="2" r="3.6" fill="#fbf2d6" stroke="#1d1308" stroke-width="1.8"/>
+      <circle cx="-8"  cy="2" r="1.6" fill="#1d1308"/>
+      <circle cx=" 18" cy="2" r="3.6" fill="#fbf2d6" stroke="#1d1308" stroke-width="1.8"/>
+      <circle cx=" 18" cy="2" r="1.6" fill="#1d1308"/>
+
+      <!-- 鼻梁 -->
+      <path d="M 2 -4 q 0 12 0 22" stroke-width="1.4" opacity="0.7"/>
+
+      <!-- 大鼻孔 -->
+      <ellipse cx="-2" cy="20" rx="3" ry="2" fill="#1d1308"/>
+      <ellipse cx="10" cy="20" rx="3" ry="2" fill="#1d1308"/>
+
+      <!-- 嘴 -->
+      <path d="M -2 28 q 6 4 14 0" stroke-width="1.6"/>
+
+      <!-- 垂肉（dewlap，牛下巴下垂皮） -->
+      <path d="M -10 30
+               C -14  40  -10  50   -2  52
+               C   8  54   16  46   14  36
+               C  14  32   8  30    0  30 Z"
+            stroke-width="2.4" fill="#fbf2d6"/>
+      <!-- 垂肉皱褶 -->
+      <g stroke-width="1" opacity="0.7">
+        <path d="M -8 36 q 4 8 0 14"/>
+        <path d="M  0 36 q 4 8 0 14"/>
+        <path d="M  8 36 q 4 8 0 14"/>
+      </g>
+
+      <!-- 颊须 -->
+      <g stroke-width="0.9" opacity="0.65">
+        <path d="M -22 16 q -12 4 -18 12"/>
+        <path d="M  30 16 q 12 4 18 12"/>
+      </g>
+    </g>
+
+    <!-- 地面青草 -->
+    <g stroke="#3a2618" stroke-width="1" opacity="0.5" fill="none">
+      <path d="M-130 70 q 4 -8 0 -16"/>
+      <path d="M-122 72 q 4 -8 0 -16"/>
+      <path d="M-114 70 q 4 -8 0 -16"/>
+      <path d="M 110 60 q 4 -8 0 -16"/>
+      <path d="M 118 62 q 4 -8 0 -16"/>
+      <path d="M 126 60 q 4 -8 0 -16"/>
+    </g>
+  </g>
+
+  <!-- ⑥ 题款区 -->
+  <text x="300" y="510" text-anchor="middle" font-size="44" fill="#3a2618" font-weight="bold" letter-spacing="6">牛金牛</text>
+  <text x="300" y="545" text-anchor="middle" font-size="20" fill="#7a1f15" letter-spacing="3">五行属金　|　神兽为牛</text>
+  <text x="300" y="572" text-anchor="middle" font-size="15" fill="#a8362a" letter-spacing="14">北　方　玄　武　七　宿</text>
+
+  <!-- ⑦ 钤印 -->
+  <g transform="translate(522 540)">
+    <rect x="-22" y="-22" width="44" height="44" fill="#a8362a" stroke="#7a1f15" stroke-width="1.4"/>
+    <text x="0" y="-2"  text-anchor="middle" font-size="18" fill="#fbf2d6" font-weight="bold">牛</text>
+    <text x="0" y="18"  text-anchor="middle" font-size="14" fill="#fbf2d6">宿</text>
+  </g>
+</svg>

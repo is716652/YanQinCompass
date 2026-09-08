@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 二十八星宿图鉴 · 奎木狼（西方白虎第一宿）
+      画布 600x600；所有坐标相对于 viewBox。
+      风格：朱砂边框 + 米黄卷轴 + 圆形牌饰 + 工笔淡墨 + 楷书题款。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" font-family="'STKaiti','KaiTi','楷体','Songti SC','SimSun',serif">
+  <defs>
+    <radialGradient id="medallion" cx="50%" cy="48%" r="58%">
+      <stop offset="0%"  stop-color="#fbf2d6"/>
+      <stop offset="70%" stop-color="#f1e2b6"/>
+      <stop offset="100%" stop-color="#d9c489"/>
+    </radialGradient>
+    <linearGradient id="vermilion" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#7a1f15"/>
+      <stop offset="100%" stop-color="#a8362a"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#d8b25a"/>
+      <stop offset="100%" stop-color="#a17a30"/>
+    </linearGradient>
+    <filter id="paperGrain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7"/>
+      <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.30  0 0 0 0 0.18  0 0 0 0.10 0"/>
+    </filter>
+    <symbol id="cornerCloud" viewBox="0 0 60 60">
+      <path d="M2 30 Q10 18 22 22 Q26 8 40 14 Q52 8 56 22 L56 36 Q48 30 40 36 Q30 28 22 36 Q12 32 2 38 Z"
+            fill="url(#cloud)" stroke="#7a5a22" stroke-width="0.8" opacity="0.9"/>
+    </symbol>
+  </defs>
+
+  <rect width="600" height="600" fill="#f5e9c4"/>
+  <rect width="600" height="600" filter="url(#paperGrain)" opacity="0.55"/>
+
+  <rect x="18" y="18" width="564" height="564" fill="none" stroke="url(#vermilion)" stroke-width="7" rx="14"/>
+  <rect x="32" y="32" width="536" height="536" fill="none" stroke="#7a1f15" stroke-width="1.4" rx="8"/>
+  <use href="#cornerCloud" x="36" y="36" width="60" height="60"/>
+  <use href="#cornerCloud" x="504" y="36" width="60" height="60" transform="translate(1064 0) scale(-1 1)"/>
+  <use href="#cornerCloud" x="36" y="504" width="60" height="60" transform="translate(0 1068) scale(1 -1)"/>
+  <use href="#cornerCloud" x="504" y="504" width="60" height="60" transform="translate(1064 1068) scale(-1 -1)"/>
+
+  <circle cx="300" cy="270" r="205" fill="url(#medallion)" stroke="#3a2618" stroke-width="3"/>
+  <circle cx="300" cy="270" r="197" fill="none"      stroke="#3a2618" stroke-width="0.9"/>
+  <circle cx="300" cy="270" r="190" fill="none"      stroke="#a17a30" stroke-width="0.6" stroke-dasharray="2 4" opacity="0.7"/>
+
+  <g opacity="0.85">
+    <path d="M180 130 Q210 110 245 122 Q260 100 295 112 Q310 92 340 110 Q360 98 388 120 Q420 112 420 140
+             Q420 152 405 152 Q380 156 360 148 Q335 158 305 148 Q280 158 250 148 Q220 156 200 148
+             Q180 150 180 140 Z"
+          fill="url(#cloud)" stroke="#7a5a22" stroke-width="1.2"/>
+    <path d="M225 122 q12 -10 26 0" fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M290 110 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M355 118 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+  </g>
+
+  <!-- 狼：警觉站立，竖耳尖吻，蓬尾 -->
+  <g transform="translate(300 285)" stroke="#1d1308" fill="none"
+     stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- 远山影（淡） -->
+    <g stroke="#3a2618" stroke-width="1" opacity="0.30" fill="none">
+      <path d="M-160 110 q30 -20 60 0 t60 0 t60 0 t60 0 t60 0"/>
+      <path d="M-150 -100 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0"/>
+    </g>
+
+    <!-- 蓬尾（关键特征：粗大下垂毛丛） -->
+    <path d="M  70 30
+             C 110 30   130 50   130 80
+             C 130 110  110 130   90 124
+             C  78 120   72 110   78 100
+             C  82  90   92  88  100  90"
+          stroke-width="3.6" fill="#fbf2d6"/>
+    <!-- 尾毛丛短线 -->
+    <g stroke-width="1.6" opacity="0.85">
+      <path d="M 110 50 q  6 -10  0 -22"/>
+      <path d="M 120 70 q 12 -10  6 -26"/>
+      <path d="M 126 92 q 14 -8  10 -24"/>
+      <path d="M 122 116 q 12 -6 14 -22"/>
+      <path d="M 106 130 q 12 -2 16 -16"/>
+      <path d="M  90 134 q 10 4 18 -8"/>
+    </g>
+
+    <!-- 身体（修长，肩高臀低） -->
+    <path d="M -80 -10
+             C -80 -36  -50 -44  -10 -42
+             C  30 -40   70 -30   80   0
+             C  86  24   80  50   60  58
+             C  30  68  -10  68  -50  56
+             C -82  46  -86  18  -80  -10 Z"
+          stroke-width="4" fill="#fbf2d6"/>
+
+    <!-- 颈背鬃毛（短促丛纹） -->
+    <g stroke-width="1.6" opacity="0.85">
+      <path d="M -40 -40 q 6 -14 14 -14"/>
+      <path d="M -22 -42 q 6 -14 14 -14"/>
+      <path d="M  -4 -42 q 6 -14 14 -14"/>
+      <path d="M  14 -40 q 6 -14 14 -14"/>
+      <path d="M  32 -36 q 6 -14 14 -14"/>
+      <path d="M  50 -28 q 6 -12 14 -12"/>
+    </g>
+
+    <!-- 胸腹纹理（长毛暗示） -->
+    <g stroke-width="1.2" opacity="0.65">
+      <path d="M -70 30 q 14 6 30 0"/>
+      <path d="M -40 44 q 14 6 30 0"/>
+      <path d="M  -8 50 q 14 6 30 0"/>
+      <path d="M  24 50 q 14 6 30 0"/>
+    </g>
+
+    <!-- 四肢（细长有力） -->
+    <g stroke-width="3" fill="#fbf2d6">
+      <!-- 左前腿 -->
+      <path d="M -50 60
+               C -50 80  -48 100  -46 116
+               M -46 116 l -8 4 m 0 -2 l -4 2
+               M -46 116 l  6 6"/>
+      <!-- 右前腿 -->
+      <path d="M -10 66
+               C -10 86  -10 104  -10 120
+               M -10 120 l -8 4 m 0 -2 l -4 2
+               M -10 120 l  6 6"/>
+      <!-- 左后腿（微曲） -->
+      <path d="M  24 60
+               C  24 78   28 96   30 112
+               C  20 100  16 86   22 76
+               M 30 112 l -8 4 m 0 -2 l -4 2
+               M 30 112 l  6 6"/>
+      <!-- 右后腿 -->
+      <path d="M  60 50
+               C  62 70   64 90   66 108
+               M 66 108 l -8 4 m 0 -2 l -4 2
+               M 66 108 l  6 6"/>
+    </g>
+
+    <!-- 头部（朝左，尖吻警觉） -->
+    <g transform="translate(-60 -34)">
+      <!-- 头型 -->
+      <path d="M  -10 -10
+               C  -22 -28  -10 -44  12 -42
+               C   34 -40   48 -28   52 -10
+               C   54   4   44  14   22  16
+               C   -2  16 -18   8  -10 -10 Z"
+            stroke-width="3.4" fill="#fbf2d6"/>
+
+      <!-- 左尖耳（三角竖立） -->
+      <path d="M -2 -36
+               L  -18 -64
+               L  10 -36 Z"
+            stroke-width="2.6" fill="#fbf2d6"/>
+      <!-- 耳内纹 -->
+      <path d="M -4 -42 L -10 -54" stroke-width="1.2"/>
+
+      <!-- 右尖耳 -->
+      <path d="M 26 -34
+               L 30 -64
+               L 44 -32 Z"
+            stroke-width="2.6" fill="#fbf2d6"/>
+      <path d="M 32 -42 L 32 -56" stroke-width="1.2"/>
+
+      <!-- 怒眉 -->
+      <path d="M -2 -22 q 12 -8 22 -2" stroke-width="2.4"/>
+
+      <!-- 锐眼（杏仁竖瞳感） -->
+      <path d="M  2 -16
+               C  -2 -22  10 -24  16 -16
+               C  12  -8  -2 -10  2 -16 Z"
+            stroke-width="2" fill="#1d1308"/>
+      <circle cx="6" cy="-17" r="1.2" fill="#fbf2d6"/>
+
+      <!-- 鼻吻（向前突出） -->
+      <path d="M  52 -8
+               C  68 -10  82  -2  86  10
+               C  82  20  66  20   50  14"
+            stroke-width="3" fill="#fbf2d6"/>
+      <!-- 鼻尖 -->
+      <path d="M 78 0 q 6 4 0 12 q -6 -4 0 -12 Z"
+            stroke-width="1.6" fill="#1d1308"/>
+
+      <!-- 嘴裂露齿 -->
+      <path d="M 50 14 Q 70 22 88 10"
+            stroke-width="2" fill="#7a1f15" fill-opacity="0.18"/>
+      <!-- 尖牙（2 枚犬齿） -->
+      <path d="M 60 14 l 2 8 l 3 -6
+        M 78 14 l 2 8 l 3 -6"
+            stroke-width="1.4" fill="#fbf2d6"/>
+
+      <!-- 须 -->
+      <g stroke-width="0.9" opacity="0.85">
+        <path d="M 64 6 q 12 0 20 -2"/>
+        <path d="M 66 12 q 12 4 20 4"/>
+        <path d="M 64 18 q 12 6 20 8"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- 题款 -->
+  <text x="300" y="510" text-anchor="middle" font-size="44" fill="#3a2618" font-weight="bold" letter-spacing="6">奎木狼</text>
+  <text x="300" y="545" text-anchor="middle" font-size="20" fill="#7a1f15" letter-spacing="3">五行属木　|　神兽为狼</text>
+  <text x="300" y="572" text-anchor="middle" font-size="15" fill="#a8362a" letter-spacing="14">西　方　白　虎　七　宿</text>
+
+  <!-- 钤印 -->
+  <g transform="translate(522 540)">
+    <rect x="-22" y="-22" width="44" height="44" fill="#a8362a" stroke="#7a1f15" stroke-width="1.4"/>
+    <text x="0" y="-2"  text-anchor="middle" font-size="18" fill="#fbf2d6" font-weight="bold">奎</text>
+    <text x="0" y="18"  text-anchor="middle" font-size="14" fill="#fbf2d6">宿</text>
+  </g>
+</svg>

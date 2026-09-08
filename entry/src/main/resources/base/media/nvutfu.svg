@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 二十八星宿图鉴 · 女土蝠
+     画布 600x600；所有坐标相对于 viewBox。
+     风格：朱砂边框 + 米黄卷轴 + 圆形牌饰 + 工笔淡墨 + 楷书题款。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" font-family="'STKaiti','KaiTi','楷体','Songti SC','SimSun',serif">
+  <defs>
+    <radialGradient id="medallion" cx="50%" cy="48%" r="58%">
+      <stop offset="0%"  stop-color="#fbf2d6"/>
+      <stop offset="70%" stop-color="#f1e2b6"/>
+      <stop offset="100%" stop-color="#d9c489"/>
+    </radialGradient>
+    <linearGradient id="vermilion" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#7a1f15"/>
+      <stop offset="100%" stop-color="#a8362a"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#d8b25a"/>
+      <stop offset="100%" stop-color="#a17a30"/>
+    </linearGradient>
+    <filter id="paperGrain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7"/>
+      <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.30  0 0 0 0 0.18  0 0 0 0.10 0"/>
+    </filter>
+    <symbol id="cornerCloud" viewBox="0 0 60 60">
+      <path d="M2 30 Q10 18 22 22 Q26 8 40 14 Q52 8 56 22 L56 36 Q48 30 40 36 Q30 28 22 36 Q12 32 2 38 Z"
+            fill="url(#cloud)" stroke="#7a5a22" stroke-width="0.8" opacity="0.9"/>
+    </symbol>
+  </defs>
+
+  <rect width="600" height="600" fill="#f5e9c4"/>
+  <rect width="600" height="600" filter="url(#paperGrain)" opacity="0.55"/>
+
+  <rect x="18" y="18" width="564" height="564" fill="none" stroke="url(#vermilion)" stroke-width="7" rx="14"/>
+  <rect x="32" y="32" width="536" height="536" fill="none" stroke="#7a1f15" stroke-width="1.4" rx="8"/>
+  <use href="#cornerCloud" x="36" y="36" width="60" height="60"/>
+  <use href="#cornerCloud" x="504" y="36" width="60" height="60" transform="translate(1064 0) scale(-1 1)"/>
+  <use href="#cornerCloud" x="36" y="504" width="60" height="60" transform="translate(0 1068) scale(1 -1)"/>
+  <use href="#cornerCloud" x="504" y="504" width="60" height="60" transform="translate(1064 1068) scale(-1 -1)"/>
+
+  <circle cx="300" cy="270" r="205" fill="url(#medallion)" stroke="#3a2618" stroke-width="3"/>
+  <circle cx="300" cy="270" r="197" fill="none"      stroke="#3a2618" stroke-width="0.9"/>
+  <circle cx="300" cy="270" r="190" fill="none"      stroke="#a17a30" stroke-width="0.6" stroke-dasharray="2 4" opacity="0.7"/>
+
+  <g opacity="0.85">
+    <path d="M180 130 Q210 110 245 122 Q260 100 295 112 Q310 92 340 110 Q360 98 388 120 Q420 112 420 140
+             Q420 152 405 152 Q380 156 360 148 Q335 158 305 148 Q280 158 250 148 Q220 156 200 148
+             Q180 150 180 140 Z"
+          fill="url(#cloud)" stroke="#7a5a22" stroke-width="1.2"/>
+    <path d="M225 122 q12 -10 26 0" fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M290 110 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M355 118 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+  </g>
+
+  <!-- ⑤ 主体：蝙蝠（展翅飞翔，双翼张开显指骨）居中于 (300, 280)，约占 360x300 -->
+  <g transform="translate(300 285)" stroke="#1d1308" fill="none"
+     stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- 主体翅膀先绘：左右各一，张开如扇 -->
+    <!-- 翼膜外缘 -->
+    <g stroke-width="3.4" fill="#fbf2d6">
+      <!-- 左翼 -->
+      <path d="M -16 -8
+               C -60 -10 -100 -30 -140 -36
+               C -160 -38 -170 -28 -160 -10
+               C -150  10 -130  30  -90  40
+               C -60  46  -34  36  -16  20 Z"/>
+      <!-- 右翼 -->
+      <path d="M  16 -8
+               C  60 -10  100 -30  140 -36
+               C 160 -38  170 -28  160 -10
+               C 150  10  130  30   90  40
+               C  60  46   34  36   16  20 Z"/>
+    </g>
+
+    <!-- 翼内指骨（手指骨呈辐射状） -->
+    <g stroke-width="2.2" fill="none">
+      <!-- 左翼指骨（5 条，从腕部向外辐射） -->
+      <path d="M -22 -4 C -50 -16 -90 -28 -150 -32"/>
+      <path d="M -22 -2 C -50 -8  -90 -16 -158 -10"/>
+      <path d="M -22  2 C -50  6  -90  10 -154   8"/>
+      <path d="M -22  6 C -50 16  -90  30 -140  36"/>
+      <path d="M -22 12 C -46 22  -78  34 -100  42"/>
+      <!-- 右翼指骨 -->
+      <path d="M  22 -4 C  50 -16   90 -28  150 -32"/>
+      <path d="M  22 -2 C  50 -8    90 -16  158 -10"/>
+      <path d="M  22  2 C  50  6    90  10  154   8"/>
+      <path d="M  22  6 C  50 16    90  30  140  36"/>
+      <path d="M  22 12 C  46 22    78  34  100  42"/>
+    </g>
+
+    <!-- 翼膜细密纹（沿指骨之间的翼膜） -->
+    <g stroke-width="0.8" opacity="0.55">
+      <path d="M -40 -10 q -20 -6 -50 -8"/>
+      <path d="M -40 -2  q -30  2 -70  4"/>
+      <path d="M -40  6  q -30  6 -70 10"/>
+      <path d="M -40 14  q -28  8 -60 16"/>
+      <path d="M  40 -10 q  20 -6  50 -8"/>
+      <path d="M  40 -2  q  30  2  70  4"/>
+      <path d="M  40  6  q  30  6  70 10"/>
+      <path d="M  40 14  q  28  8  60 16"/>
+    </g>
+
+    <!-- 翼尖指爪（蝙蝠拇指爪，前缘第一指具爪） -->
+    <g stroke-width="1.4" fill="#1d1308">
+      <path d="M -150 -32 l 4 4 l -2 -8 z"/>
+      <path d="M  150 -32 l -4 4 l 2 -8 z"/>
+    </g>
+
+    <!-- 翼膜内缘连接身体 -->
+    <path d="M -22 -8 q -8 12 -8 28" stroke-width="2.2" fill="none"/>
+    <path d="M  22 -8 q  8 12  8 28" stroke-width="2.2" fill="none"/>
+
+    <!-- 躯干（中央带毛绒感，蝙蝠身小） -->
+    <path d="M -22 -16
+             C -28 -30  -10 -42    0 -42
+             C  10 -42   28 -30   22 -16
+             C  22   6   18  20    0  22
+             C -18  20 -22   6  -22 -16 Z"
+          stroke-width="3.4" fill="#fbf2d6"/>
+
+    <!-- 头（朝下，挂在身躯底部） -->
+    <g transform="translate(0 30)">
+      <!-- 头部轮廓 -->
+      <path d="M -22  -2
+               C -28 -16  -10 -22   0 -22
+               C  10 -22   28 -16  22  -2
+               C  22   8   14  14    0  14
+               C -14  14 -22   8 -22  -2 Z"
+            stroke-width="3" fill="#fbf2d6"/>
+
+      <!-- 大耳两枚（蝙蝠标志性大耳） -->
+      <g stroke-width="2.4" fill="#fbf2d6">
+        <path d="M -16 -16
+                 C -32 -22 -36 -10 -28  -2
+                 C -22   4 -16  -2 -12  -8 Z"/>
+        <path d="M  16 -16
+                 C  32 -22  36 -10  28  -2
+                 C  22   4  16  -2  12  -8 Z"/>
+      </g>
+      <!-- 耳内粉 -->
+      <g fill="#a8362a" opacity="0.55" stroke="#1d1308" stroke-width="1">
+        <path d="M -16 -14 q -10 -4 -8 4 q 2 4 6 4 z"/>
+        <path d="M  16 -14 q  10 -4  8 4 q -2 4 -6 4 z"/>
+      </g>
+
+      <!-- 叶状鼻突（蝙蝠特有） -->
+      <path d="M -2 0
+               L 0 6
+               L  2 0
+               L  4 -4
+               L  -4 -4 Z"
+            stroke-width="1.4" fill="#1d1308"/>
+
+      <!-- 眼（小而圆） -->
+      <circle cx="-8" cy="-6" r="2" fill="#1d1308"/>
+      <circle cx=" 8" cy="-6" r="2" fill="#1d1308"/>
+      <circle cx="-7" cy="-7" r="0.6" fill="#fbf2d6"/>
+      <circle cx=" 9" cy="-7" r="0.6" fill="#fbf2d6"/>
+
+      <!-- 小嘴（咧齿）-->
+      <path d="M -6 6 q 6 4 12 0" stroke-width="1.4"/>
+      <!-- 尖牙两枚 -->
+      <path d="M -2 6 l 1 4 l 1 -4 Z" stroke-width="0.8" fill="#fbf2d6"/>
+      <path d="M  2 6 l 1 4 l 1 -4 Z" stroke-width="0.8" fill="#fbf2d6"/>
+
+      <!-- 颊须 -->
+      <g stroke-width="0.8" opacity="0.7">
+        <path d="M -14 4 q -8 4 -12 8"/>
+        <path d="M  14 4 q  8 4  12 8"/>
+      </g>
+    </g>
+
+    <!-- 尾膜（两腿之间的小膜，含尾） -->
+    <g stroke-width="2.4" fill="#fbf2d6">
+      <path d="M -16 24
+               C -22 40  -8  50   0  48
+               C  8  50  22  40  16  24 Z"/>
+    </g>
+    <!-- 尾膜骨（两腿之间） -->
+    <g stroke-width="1.6">
+      <path d="M -16 24 L 16 24"/>
+      <path d="M -10 24 q 2 14 10 14"/>
+      <path d="M  10 24 q -2 14 -10 14"/>
+      <path d="M 0 24 L 0 48"/>
+    </g>
+    <!-- 短尾尖 -->
+    <path d="M -4 48 L 0 56 L 4 48 Z" stroke-width="1.6" fill="#fbf2d6"/>
+
+    <!-- 胸毛（暗示蝙蝠胸绒毛） -->
+    <g stroke-width="1" opacity="0.5">
+      <path d="M -10 -28 q 4 -4 8 0"/>
+      <path d="M  -2 -32 q 4 -4 8 0"/>
+      <path d="M  -8 -22 q 4 -4 8 0"/>
+      <path d="M   4 -22 q 4 -4 8 0"/>
+      <path d="M -10 -14 q 4 -4 8 0"/>
+      <path d="M   4 -14 q 4 -4 8 0"/>
+    </g>
+  </g>
+
+  <!-- ⑥ 题款区 -->
+  <text x="300" y="510" text-anchor="middle" font-size="44" fill="#3a2618" font-weight="bold" letter-spacing="6">女土蝠</text>
+  <text x="300" y="545" text-anchor="middle" font-size="20" fill="#7a1f15" letter-spacing="3">五行属土　|　神兽为蝠</text>
+  <text x="300" y="572" text-anchor="middle" font-size="15" fill="#a8362a" letter-spacing="14">北　方　玄　武　七　宿</text>
+
+  <!-- ⑦ 钤印 -->
+  <g transform="translate(522 540)">
+    <rect x="-22" y="-22" width="44" height="44" fill="#a8362a" stroke="#7a1f15" stroke-width="1.4"/>
+    <text x="0" y="-2"  text-anchor="middle" font-size="18" fill="#fbf2d6" font-weight="bold">女</text>
+    <text x="0" y="18"  text-anchor="middle" font-size="14" fill="#fbf2d6">宿</text>
+  </g>
+</svg>

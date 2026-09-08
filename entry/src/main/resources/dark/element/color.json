@@ -1,0 +1,68 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#000000"
+    },
+    {
+      "name": "paper_bg",
+      "value": "#191713"
+    },
+    {
+      "name": "card_bg",
+      "value": "#26221B"
+    },
+    {
+      "name": "chip_bg",
+      "value": "#322D24"
+    },
+    {
+      "name": "ink_primary",
+      "value": "#EAE3D2"
+    },
+    {
+      "name": "ink_secondary",
+      "value": "#A79E8C"
+    },
+    {
+      "name": "divider",
+      "value": "#3A342A"
+    },
+    {
+      "name": "cinnabar",
+      "value": "#D65F4F"
+    },
+    {
+      "name": "cinnabar_soft",
+      "value": "#4A2B26"
+    },
+    {
+      "name": "elem_wood",
+      "value": "#6FAF83"
+    },
+    {
+      "name": "elem_fire",
+      "value": "#D97A6C"
+    },
+    {
+      "name": "elem_earth",
+      "value": "#C9A05E"
+    },
+    {
+      "name": "elem_metal",
+      "value": "#9FB0BA"
+    },
+    {
+      "name": "elem_water",
+      "value": "#7A9CBC"
+    },
+    {
+      "name": "elem_sun",
+      "value": "#E0A34F"
+    },
+    {
+      "name": "elem_moon",
+      "value": "#A98FD1"
+    }
+  ]
+}

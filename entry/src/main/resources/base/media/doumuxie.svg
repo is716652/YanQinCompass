@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 二十八星宿图鉴 · 斗木獬
+     画布 600x600；所有坐标相对于 viewBox。
+     风格：朱砂边框 + 米黄卷轴 + 圆形牌饰 + 工笔淡墨 + 楷书题款。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" font-family="'STKaiti','KaiTi','楷体','Songti SC','SimSun',serif">
+  <defs>
+    <radialGradient id="medallion" cx="50%" cy="48%" r="58%">
+      <stop offset="0%"  stop-color="#fbf2d6"/>
+      <stop offset="70%" stop-color="#f1e2b6"/>
+      <stop offset="100%" stop-color="#d9c489"/>
+    </radialGradient>
+    <linearGradient id="vermilion" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#7a1f15"/>
+      <stop offset="100%" stop-color="#a8362a"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#d8b25a"/>
+      <stop offset="100%" stop-color="#a17a30"/>
+    </linearGradient>
+    <filter id="paperGrain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7"/>
+      <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.30  0 0 0 0 0.18  0 0 0 0.10 0"/>
+    </filter>
+    <symbol id="cornerCloud" viewBox="0 0 60 60">
+      <path d="M2 30 Q10 18 22 22 Q26 8 40 14 Q52 8 56 22 L56 36 Q48 30 40 36 Q30 28 22 36 Q12 32 2 38 Z"
+            fill="url(#cloud)" stroke="#7a5a22" stroke-width="0.8" opacity="0.9"/>
+    </symbol>
+  </defs>
+
+  <rect width="600" height="600" fill="#f5e9c4"/>
+  <rect width="600" height="600" filter="url(#paperGrain)" opacity="0.55"/>
+
+  <rect x="18" y="18" width="564" height="564" fill="none" stroke="url(#vermilion)" stroke-width="7" rx="14"/>
+  <rect x="32" y="32" width="536" height="536" fill="none" stroke="#7a1f15" stroke-width="1.4" rx="8"/>
+  <use href="#cornerCloud" x="36" y="36" width="60" height="60"/>
+  <use href="#cornerCloud" x="504" y="36" width="60" height="60" transform="translate(1064 0) scale(-1 1)"/>
+  <use href="#cornerCloud" x="36" y="504" width="60" height="60" transform="translate(0 1068) scale(1 -1)"/>
+  <use href="#cornerCloud" x="504" y="504" width="60" height="60" transform="translate(1064 1068) scale(-1 -1)"/>
+
+  <circle cx="300" cy="270" r="205" fill="url(#medallion)" stroke="#3a2618" stroke-width="3"/>
+  <circle cx="300" cy="270" r="197" fill="none"      stroke="#3a2618" stroke-width="0.9"/>
+  <circle cx="300" cy="270" r="190" fill="none"      stroke="#a17a30" stroke-width="0.6" stroke-dasharray="2 4" opacity="0.7"/>
+
+  <g opacity="0.85">
+    <path d="M180 130 Q210 110 245 122 Q260 100 295 112 Q310 92 340 110 Q360 98 388 120 Q420 112 420 140
+             Q420 152 405 152 Q380 156 360 148 Q335 158 305 148 Q280 158 250 148 Q220 156 200 148
+             Q180 150 180 140 Z"
+          fill="url(#cloud)" stroke="#7a5a22" stroke-width="1.2"/>
+    <path d="M225 122 q12 -10 26 0" fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M290 110 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M355 118 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+  </g>
+
+  <!-- ⑤ 主体：獬豸（独角神羊，侧立四足）居中于 (300, 280)，约占 360x300 -->
+  <g transform="translate(300 285)" stroke="#1d1308" fill="none"
+     stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- 短尾（蓬松小尾） -->
+    <g stroke-width="3" fill="#fbf2d6">
+      <path d="M  90  -10
+               C 110 -20  126 -16 130   0
+               C 132  12  118  18  108  10
+               C 100   4   98  -2   90 -10 Z"/>
+    </g>
+    <!-- 尾毛流线 -->
+    <g stroke-width="1.4" opacity="0.8">
+      <path d="M 100 -8 q 6 -2 12 4"/>
+      <path d="M 110 -10 q 4 4 12 0"/>
+      <path d="M 116 -2 q 4 6 12 4"/>
+    </g>
+
+    <!-- 后腿（远侧） -->
+    <g stroke-width="3.6" fill="#fbf2d6">
+      <path d="M  10 -10
+               C  18  10  16  28  24  44
+               L  60  44  L  60   8 Z"/>
+      <!-- 后蹄 -->
+      <path d="M 24 44 l -2 12 m -2 -2 l 0 2 M 36 44 l 0 14 m -2 -2 l 2 2 M 48 44 l 0 14 m -2 -2 l 4 0 M 58 44 l 4 12 m -2 -2 l 4 0"/>
+    </g>
+
+    <!-- 身躯（浑厚饱满，类牛类羊） -->
+    <path d="M -100 -10
+             C -110 -50  -60 -78    0 -78
+             C  60 -78   96 -50   90  -10
+             C  84  30   50  50    0  50
+             C -50  50 -90  30 -100 -10 Z"
+          stroke-width="4.2" fill="#fbf2d6"/>
+
+    <!-- 胸腹弧线（暗示厚实） -->
+    <path d="M -70 12 q 50 30 120 0" stroke-width="1.6" opacity="0.55"/>
+
+    <!-- 身躯毛纹（卷曲淡纹） -->
+    <g stroke-width="1.2" opacity="0.6">
+      <path d="M -60 -40 q 8 -8 16 0"/>
+      <path d="M -20 -56 q 8 -8 16 0"/>
+      <path d="M  20 -56 q 8 -8 16 0"/>
+      <path d="M  60 -40 q 8 -8 16 0"/>
+      <path d="M -40  20 q 8 -8 16 0"/>
+      <path d="M   0  30 q 8 -8 16 0"/>
+      <path d="M  40  20 q 8 -8 16 0"/>
+    </g>
+
+    <!-- 前腿（近侧，健壮） -->
+    <g stroke-width="3.6" fill="#fbf2d6">
+      <path d="M -70 -10
+               C -78  10 -76  30 -84  48
+               L -50  48  L -50  10 Z"/>
+      <!-- 前蹄 -->
+      <path d="M -84 48 l -4 14 m -2 -2 l 0 2 M -72 48 l 0 14 m -2 -2 l 2 2 M -60 48 l 0 14 m -2 -2 l 4 0 M -52 48 l 4 14 m -2 -2 l 4 0"/>
+    </g>
+
+    <!-- 头部（左前方，昂首） -->
+    <g transform="translate(-86 -78)">
+      <!-- 头型（椭圆上宽下尖） -->
+      <path d="M -38  10
+               C -46 -18  -20 -34   8 -32
+               C  30 -30   42 -16   42   8
+               C  42  20   30  26   12  24
+               C  -8  26 -28  22  -38  10 Z"
+            stroke-width="3.6" fill="#fbf2d6"/>
+
+      <!-- 双耳（短竖立） -->
+      <path d="M -22 -28 l -6 -16 l 14 4 z" stroke-width="2.6" fill="#fbf2d6"/>
+      <path d="M  18 -28 l  6 -16 l -14 4 z" stroke-width="2.6" fill="#fbf2d6"/>
+      <!-- 耳内粉 -->
+      <path d="M -20 -28 l -2 -10 l 8 4 z" stroke-width="1.2" fill="#a8362a" opacity="0.55"/>
+      <path d="M  16 -28 l  2 -10 l -8 4 z" stroke-width="1.2" fill="#a8362a" opacity="0.55"/>
+
+      <!-- 额前短鬃毛（短竖立鬃） -->
+      <g stroke-width="1.4" fill="#fbf2d6">
+        <path d="M -10 -28 l 2 -10 l 2 10"/>
+        <path d="M   0 -30 l 2 -12 l 2 12"/>
+        <path d="M  10 -28 l 2 -10 l 2 10"/>
+      </g>
+
+      <!-- 中央独角（獬豸特征：额中正前方一根直立尖角） -->
+      <path d="M 2 -32
+               C  -2 -32  -4 -22  -2 -8
+               C   0  -2   4  -2   6  -8
+               C   8 -22   6 -32   2 -32 Z"
+            stroke-width="3" fill="#fbf2d6"/>
+      <!-- 角骨纹 -->
+      <g stroke-width="1" opacity="0.7">
+        <path d="M -1 -28 q 4 0 6 0"/>
+        <path d="M -1 -22 q 4 0 6 0"/>
+        <path d="M -1 -16 q 4 0 6 0"/>
+      </g>
+
+      <!-- 眉骨 -->
+      <path d="M -22 -10 q 12 -6 24 0" stroke-width="2"/>
+      <path d="M  12 -10 q 12 -6 24 0" stroke-width="2"/>
+
+      <!-- 眼（大圆睛，炯炯有神） -->
+      <circle cx="-10" cy="-2" r="4" fill="#fbf2d6" stroke="#1d1308" stroke-width="2"/>
+      <circle cx="-10" cy="-2" r="2" fill="#1d1308"/>
+      <circle cx=" 24" cy="-2" r="4" fill="#fbf2d6" stroke="#1d1308" stroke-width="2"/>
+      <circle cx=" 24" cy="-2" r="2" fill="#1d1308"/>
+
+      <!-- 鼻梁（中线） -->
+      <path d="M 6 -8 q 4 8 0 18" stroke-width="1.4" opacity="0.7"/>
+
+      <!-- 鼻头 -->
+      <path d="M -2 14 q 8 -2 14 0 q 4 4 -2 6 q -8 2 -12 -2 q -4 -2 0 -4 Z" stroke-width="1.4" fill="#1d1308"/>
+
+      <!-- 嘴（紧闭，庄严） -->
+      <path d="M -2 20 q 8 4 18 0" stroke-width="1.6"/>
+
+      <!-- 颊须 -->
+      <g stroke-width="0.9" opacity="0.7">
+        <path d="M -22 14 q -12 0 -18 4"/>
+        <path d="M -22 20 q -12 4 -18 12"/>
+        <path d="M  34 14 q 12 0 18 6"/>
+        <path d="M  34 20 q 12 4 18 12"/>
+      </g>
+    </g>
+
+    <!-- 地面青草点缀（暗示北方玄武者龟蛇，另增木宿生气） -->
+    <g stroke="#3a2618" stroke-width="1" opacity="0.5" fill="none">
+      <path d="M-130 60 q 4 -8 0 -16"/>
+      <path d="M-122 62 q 4 -8 0 -16"/>
+      <path d="M 110 50 q 4 -8 0 -16"/>
+      <path d="M 118 52 q 4 -8 0 -16"/>
+      <path d="M 124 54 q 4 -8 0 -16"/>
+    </g>
+  </g>
+
+  <!-- ⑥ 题款区 -->
+  <text x="300" y="510" text-anchor="middle" font-size="44" fill="#3a2618" font-weight="bold" letter-spacing="6">斗木獬</text>
+  <text x="300" y="545" text-anchor="middle" font-size="20" fill="#7a1f15" letter-spacing="3">五行属木　|　神兽为獬</text>
+  <text x="300" y="572" text-anchor="middle" font-size="15" fill="#a8362a" letter-spacing="14">北　方　玄　武　七　宿</text>
+
+  <!-- ⑦ 钤印 -->
+  <g transform="translate(522 540)">
+    <rect x="-22" y="-22" width="44" height="44" fill="#a8362a" stroke="#7a1f15" stroke-width="1.4"/>
+    <text x="0" y="-2"  text-anchor="middle" font-size="18" fill="#fbf2d6" font-weight="bold">斗</text>
+    <text x="0" y="18"  text-anchor="middle" font-size="14" fill="#fbf2d6">宿</text>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+{
+  "src": [
+    "pages/Splash",
+    "pages/Index",
+    "pages/InputPage",
+    "pages/ResultPage",
+    "pages/ScriptPage",
+    "pages/BestiaryPage",
+    "pages/Legal/PrivacyPolicy",
+    "pages/Legal/UserAgreement",
+    "pages/ClassicReaderPage"
+  ]
+}

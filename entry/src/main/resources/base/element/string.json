@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "演禽通纂主模块"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "演禽通纂：基于古籍《演禽通纂》《禽星易见》整理的传统术数排盘与阅读工具"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "演禽通纂"
+    }
+  ]
+}

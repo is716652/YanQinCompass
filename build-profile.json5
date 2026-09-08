@@ -1,0 +1,83 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:\\Users\\is716\\.ohos\\config\\default_YanQinCompass_dvO2v7jbhUhVQHb1pn5EkK5McG9p0gQNC3oxA00ysKE=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B9BBE1DDE3CEF66F7EFDD22A4868B0CAF83E00130B78C14896917316837F8D32A7B8FDBE85EEE6F",
+          "profile": "C:\\Users\\is716\\.ohos\\config\\default_YanQinCompass_dvO2v7jbhUhVQHb1pn5EkK5McG9p0gQNC3oxA00ysKE=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\is716\\.ohos\\config\\default_YanQinCompass_dvO2v7jbhUhVQHb1pn5EkK5McG9p0gQNC3oxA00ysKE=.p12",
+          "storePassword": "0000001BB31AA1ECE580C4AF8781B275318EDF9381AFC673DBA6BE7C24FA41E9023936A0A21180AE18BE68"
+        }
+      },
+      {
+        "name": "release",
+        "type": "HarmonyOS",
+        "material": {
+          "storeFile": "D:/nutstore/HarmonyOS/GuoXue_Research/YanQinCompass/上架材料/APPCerts/YanQinCompass.p12",
+          "storePassword": "0000001AB6ACEFCAE06A26B91204ACF66E853218B279CC64570C4305CBC9F41918F1DEFE32E79625E61B",
+          "keyAlias": "YanQinCompass",
+          "keyPassword": "0000001A5B88518DBBE876EC3209365D185092C03C7D4EB9E0A1980BE3D0CABE200A0B81016EF7FF73E5",
+          "signAlg": "SHA256withECDSA",
+          "profile": "D:/nutstore/HarmonyOS/GuoXue_Research/YanQinCompass/上架材料/APPCerts/YanQinCompass2_pRelease.p7b",
+          "certpath": "D:/nutstore/HarmonyOS/GuoXue_Research/YanQinCompass/上架材料/APPCerts/YanQinCompass2.cer"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "targetSdkVersion": "6.0.0(20)",
+        "compatibleSdkVersion": "6.0.0(20)",
+        "runtimeOS": "HarmonyOS",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "release",
+        "signingConfig": "release",
+        "targetSdkVersion": "6.0.0(20)",
+        "compatibleSdkVersion": "6.0.0(20)",
+        "runtimeOS": "HarmonyOS",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug",
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default",
+            "release"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 二十八星宿图鉴 · 娄金狗（西方白虎第二宿）
+      画布 600x600；所有坐标相对于 viewBox。
+      风格：朱砂边框 + 米黄卷轴 + 圆形牌饰 + 工笔淡墨 + 楷书题款。 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" font-family="'STKaiti','KaiTi','楷体','Songti SC','SimSun',serif">
+  <defs>
+    <radialGradient id="medallion" cx="50%" cy="48%" r="58%">
+      <stop offset="0%"  stop-color="#fbf2d6"/>
+      <stop offset="70%" stop-color="#f1e2b6"/>
+      <stop offset="100%" stop-color="#d9c489"/>
+    </radialGradient>
+    <linearGradient id="vermilion" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#7a1f15"/>
+      <stop offset="100%" stop-color="#a8362a"/>
+    </linearGradient>
+    <linearGradient id="cloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"  stop-color="#d8b25a"/>
+      <stop offset="100%" stop-color="#a17a30"/>
+    </linearGradient>
+    <filter id="paperGrain" x="0%" y="0%" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7"/>
+      <feColorMatrix values="0 0 0 0 0.42  0 0 0 0 0.30  0 0 0 0 0.18  0 0 0 0.10 0"/>
+    </filter>
+    <symbol id="cornerCloud" viewBox="0 0 60 60">
+      <path d="M2 30 Q10 18 22 22 Q26 8 40 14 Q52 8 56 22 L56 36 Q48 30 40 36 Q30 28 22 36 Q12 32 2 38 Z"
+            fill="url(#cloud)" stroke="#7a5a22" stroke-width="0.8" opacity="0.9"/>
+    </symbol>
+  </defs>
+
+  <rect width="600" height="600" fill="#f5e9c4"/>
+  <rect width="600" height="600" filter="url(#paperGrain)" opacity="0.55"/>
+
+  <rect x="18" y="18" width="564" height="564" fill="none" stroke="url(#vermilion)" stroke-width="7" rx="14"/>
+  <rect x="32" y="32" width="536" height="536" fill="none" stroke="#7a1f15" stroke-width="1.4" rx="8"/>
+  <use href="#cornerCloud" x="36" y="36" width="60" height="60"/>
+  <use href="#cornerCloud" x="504" y="36" width="60" height="60" transform="translate(1064 0) scale(-1 1)"/>
+  <use href="#cornerCloud" x="36" y="504" width="60" height="60" transform="translate(0 1068) scale(1 -1)"/>
+  <use href="#cornerCloud" x="504" y="504" width="60" height="60" transform="translate(1064 1068) scale(-1 -1)"/>
+
+  <circle cx="300" cy="270" r="205" fill="url(#medallion)" stroke="#3a2618" stroke-width="3"/>
+  <circle cx="300" cy="270" r="197" fill="none"      stroke="#3a2618" stroke-width="0.9"/>
+  <circle cx="300" cy="270" r="190" fill="none"      stroke="#a17a30" stroke-width="0.6" stroke-dasharray="2 4" opacity="0.7"/>
+
+  <g opacity="0.85">
+    <path d="M180 130 Q210 110 245 122 Q260 100 295 112 Q310 92 340 110 Q360 98 388 120 Q420 112 420 140
+             Q420 152 405 152 Q380 156 360 148 Q335 158 305 148 Q280 158 250 148 Q220 156 200 148
+             Q180 150 180 140 Z"
+          fill="url(#cloud)" stroke="#7a5a22" stroke-width="1.2"/>
+    <path d="M225 122 q12 -10 26 0" fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M290 110 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+    <path d="M355 118 q12 -10 26 0"  fill="none" stroke="#7a5a22" stroke-width="1"/>
+  </g>
+
+  <!-- 狗：摇尾吐舌，温顺家犬 -->
+  <g transform="translate(300 285)" stroke="#1d1308" fill="none"
+     stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- 地面短草 -->
+    <g stroke="#3a2618" stroke-width="1" opacity="0.30" fill="none">
+      <path d="M-150 120 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0"/>
+      <path d="M-140 138 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0"/>
+    </g>
+
+    <!-- 翘尾（高扬欢快） -->
+    <path d="M  70 -10
+             C 100 -30  120 -60  120 -90
+             C 120 -110 108 -118  96 -110
+             C  88 -104   88 -94  94 -88"
+          stroke-width="3.4" fill="#fbf2d6"/>
+    <!-- 尾毛纹 -->
+    <g stroke-width="1.2" opacity="0.7">
+      <path d="M 96 -100 q -2 -8 -8 -10"/>
+      <path d="M 104 -110 q -2 -10 -8 -12"/>
+      <path d="M 110 -120 q 0 -10 -6 -14"/>
+      <path d="M 116 -130 q 2 -10 -2 -16"/>
+    </g>
+
+    <!-- 圆胖身体 -->
+    <path d="M -90 0
+             C -90 -36  -50 -50  -10 -50
+             C  30 -50   78 -38   84 -10
+             C  90  18   70  50   40  58
+             C   0  68  -40  68  -70  56
+             C -94  44  -94  20  -90   0 Z"
+          stroke-width="4" fill="#fbf2d6"/>
+
+    <!-- 胸腹毛纹 -->
+    <g stroke-width="1.2" opacity="0.7">
+      <path d="M -70 30 q 14 6 30 0"/>
+      <path d="M -40 44 q 14 6 30 0"/>
+      <path d="M  -8 50 q 14 6 30 0"/>
+    </g>
+
+    <!-- 四肢（粗短，立姿） -->
+    <g stroke-width="3" fill="#fbf2d6">
+      <!-- 左前腿 -->
+      <path d="M -60 60
+               C -60 78  -58 96  -56 112
+               M -56 112 l -8 4 m 0 -2 l -4 2
+               M -56 112 l  6 6"/>
+      <!-- 右前腿 -->
+      <path d="M -20 66
+               C -20 84  -20 102  -20 118
+               M -20 118 l -8 4 m 0 -2 l -4 2
+               M -20 118 l  6 6"/>
+      <!-- 左后腿 -->
+      <path d="M  22 60
+               C  22 78   24 96   26 112
+               M 26 112 l -8 4 m 0 -2 l -4 2
+               M 26 112 l  6 6"/>
+      <!-- 右后腿 -->
+      <path d="M  56 56
+               C  56 74   58 92   60 108
+               M 60 108 l -8 4 m 0 -2 l -4 2
+               M 60 108 l  6 6"/>
+    </g>
+
+    <!-- 头部（朝左，圆头软脸） -->
+    <g transform="translate(-50 -28)">
+      <!-- 头型（圆润） -->
+      <path d="M -10 -10
+               C -22 -32  -2 -50  20 -46
+               C  44 -42   56 -28  56 -8
+               C  56  10   44  18   22  18
+               C   2  18  -12  10 -10 -10 Z"
+            stroke-width="3.4" fill="#fbf2d6"/>
+
+      <!-- 左大垂耳（软塌贴颊） -->
+      <path d="M -8 -30
+               C -28 -16 -34 14 -22 30
+               C -10 36  -2 22   2 6
+               C   4 -8  -2 -22 -8 -30 Z"
+            stroke-width="3" fill="#fbf2d6"/>
+      <path d="M -10 -10 q -8 16 -8 28" stroke-width="1.4" opacity="0.7"/>
+
+      <!-- 右大垂耳 -->
+      <path d="M 18 -30
+               C 36 -10  42 14  36 32
+               C 28 40  16 30  10 14
+               C   6  -2  10 -22 18 -30 Z"
+            stroke-width="3" fill="#fbf2d6"/>
+      <path d="M 22 -8 q 8 18 10 30" stroke-width="1.4" opacity="0.7"/>
+
+      <!-- 圆眼（大而温和） -->
+      <circle cx="0"  cy="-10" r="4.2" fill="#1d1308"/>
+      <circle cx="2"  cy="-12" r="1.4" fill="#fbf2d6"/>
+      <circle cx="28" cy="-4"  r="4.2" fill="#1d1308"/>
+      <circle cx="30" cy="-6"  r="1.4" fill="#fbf2d6"/>
+
+      <!-- 圆吻短鼻 -->
+      <path d="M 56 -2
+               C 68 -4   78   4  76  14
+               C 70  22  58  22  48  16"
+            stroke-width="3" fill="#fbf2d6"/>
+      <!-- 鼻头 -->
+      <path d="M 70 4 q 6 4 0 12 q -6 -4 0 -12 Z"
+            stroke-width="1.6" fill="#1d1308"/>
+
+      <!-- 嘴（张开伸舌） -->
+      <path d="M 48 16 Q 64 28 78 16"
+            stroke-width="2.4" fill="#7a1f15" fill-opacity="0.20"/>
+      <!-- 小舌 -->
+      <path d="M 60 20 Q 64 30 70 22 Z"
+            stroke-width="1.6" fill="#a8362a"/>
+
+      <!-- 须 -->
+      <g stroke-width="0.9" opacity="0.85">
+        <path d="M 56 6 q 12 -2 22 -4"/>
+        <path d="M 56 12 q 12 2 22 2"/>
+      </g>
+
+      <!-- 头顶花纹斑点（家犬饰毛） -->
+      <path d="M 16 -38 q 6 -4 12 0" stroke-width="1.2" opacity="0.6"/>
+      <path d="M 30 -42 q 6 -4 12 0" stroke-width="1.2" opacity="0.6"/>
+    </g>
+  </g>
+
+  <!-- 题款 -->
+  <text x="300" y="510" text-anchor="middle" font-size="44" fill="#3a2618" font-weight="bold" letter-spacing="6">娄金狗</text>
+  <text x="300" y="545" text-anchor="middle" font-size="20" fill="#7a1f15" letter-spacing="3">五行属金　|　神兽为狗</text>
+  <text x="300" y="572" text-anchor="middle" font-size="15" fill="#a8362a" letter-spacing="14">西　方　白　虎　七　宿</text>
+
+  <!-- 钤印 -->
+  <g transform="translate(522 540)">
+    <rect x="-22" y="-22" width="44" height="44" fill="#a8362a" stroke="#7a1f15" stroke-width="1.4"/>
+    <text x="0" y="-2"  text-anchor="middle" font-size="18" fill="#fbf2d6" font-weight="bold">娄</text>
+    <text x="0" y="18"  text-anchor="middle" font-size="14" fill="#fbf2d6">宿</text>
+  </g>
+</svg>
