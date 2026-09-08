@@ -8,7 +8,7 @@ import { Animal } from '../model/Types';
 import { common } from '@kit.AbilityKit';
 
 const SEASON_NAMES: Record<string, string> = {
-  "spring": "春", "summer": "夏", "autumn": "秋", "winter": "冬"
+  "spring": "春", "summer": "夏", "autumn": "秋", "winter": "冬", "earth": "四季末"
 };
 
 @Entry
@@ -193,7 +193,7 @@ struct ResultPage {
               this.Badge(chart.isDay ? '昼生' : '夜生')
             }
             if (chart.season !== undefined) {
-              this.Badge(`${SEASON_NAMES[chart.season] ?? ''}季 · ${chart.seasonalStrength}`)
+              this.Badge(`${chart.season === 'earth' ? '四季末' : (SEASON_NAMES[chart.season] ?? '') + '季'} · ${chart.seasonalStrength}`)
             }
             this.Badge(`泊 ${chart.lifePalace} 宫`)
           }

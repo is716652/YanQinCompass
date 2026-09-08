@@ -22,7 +22,8 @@ export class YanQinEngine {
   private animals: Animal[] = [];
   private interactions: InteractionsData | null = null;
   private transformations: TransformationData | null = null;
-  private seasonalStrength: Record<string, string[]> | null = null;
+  // 四档旺衰表：season -> (tier -> 星宿简称列表)，据《禽星辑要》15.5 整理
+  private seasonalStrength: Record<string, Record<string, string[]>> | null = null;
 
   // 二十八宿顺序 (按角木蛟开始)
   private readonly starsOrder = [
@@ -65,7 +66,7 @@ export class YanQinEngine {
    * @param transformations 化道数据
    * @param seasonalStrength 四时生旺数据
    */
-  public init(animals: Animal[], interactions: InteractionsData, transformations: TransformationData, seasonalStrength: Record<string, string[]>) {
+  public init(animals: Animal[], interactions: InteractionsData, transformations: TransformationData, seasonalStrength: Record<string, Record<string, string[]>>) {
     this.animals = animals;
     this.interactions = interactions;
     this.transformations = transformations;
@@ -290,25 +291,36 @@ export class YanQinEngine {
     return result;
   }
 
-  /** 季节（按农历月）：1-3 春，4-6 夏，7-9 秋，10-12 冬 */
+  /** 季节（按农历月）：1-2 春，3 四季末，4-5 夏，6 四季末，7-8 秋，9 四季末，10-11 冬，12 四季末 */
   private getSeason(lunarMonth: number): string {
-    if (lunarMonth >= 1 && lunarMonth <= 3) {
+    if (lunarMonth === 3 || lunarMonth === 6 || lunarMonth === 9 || lunarMonth === 12) {
+      return "earth";
+    }
+    if (lunarMonth <= 2) {
       return "spring";
     }
-    if (lunarMonth >= 4 && lunarMonth <= 6) {
+    if (lunarMonth <= 5) {
       return "summer";
     }
-    if (lunarMonth >= 7 && lunarMonth <= 9) {
+    if (lunarMonth <= 8) {
       return "autumn";
     }
-    return "winter";
+    if (lunarMonth <= 11) {
+      return "winter";
+    }
+    return "spring";
   }
 
-  /** 四时生旺：命中旺星表为"旺"，否则"休"（数据仅区分旺/非旺） */
+  /** 四档旺衰：旺=当令、相=我生、休=生我、囚=我克、死=克我（《禽星辑要》15.5） */
   private getSeasonalStrength(starName: string, season: string): string {
     if (this.seasonalStrength && this.seasonalStrength[season]) {
-      if (this.seasonalStrength[season].includes(starName)) {
-        return "旺";
+      const tiers = this.seasonalStrength[season];
+      const tierNames: string[] = ["旺", "相", "休", "囚", "死"];
+      for (const tier of tierNames) {
+        const list = tiers[tier];
+        if (list && list.includes(starName)) {
+          return tier;
+        }
       }
     }
     return "休";

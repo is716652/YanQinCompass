@@ -1,7 +1,7 @@
 import { YanQinChart } from '../model/ChartModels';
 
 const SEASON_NAMES: Record<string, string> = {
-  "spring": "春", "summer": "夏", "autumn": "秋", "winter": "冬"
+  "spring": "春", "summer": "夏", "autumn": "秋", "winter": "冬", "earth": "四季末"
 };
 
 /**
@@ -28,11 +28,16 @@ export class ChartSummary {
 
     const seasonName: string = chart.season !== undefined ? (SEASON_NAMES[chart.season] ?? "") : "";
     if (seasonName !== "") {
-      if (chart.seasonalStrength === "旺") {
-        parts.push(`${seasonName}季当令，主星得时而旺。`);
-      } else {
-        parts.push(`${seasonName}季不当令，主星暂处休地。`);
-      }
+      const tierDesc: Record<string, string> = {
+        "旺": "当令而旺，得时得势",
+        "相": "次旺得助",
+        "休": "暂处休地",
+        "囚": "受制囚地，宜守不宜进",
+        "死": "失时陷死地，宜静待时机"
+      };
+      const label = chart.season === "earth" ? "四季末" : `${seasonName}季`;
+      const desc = tierDesc[chart.seasonalStrength] ?? "状态平平";
+      parts.push(`${label}主星${desc}。`);
     }
 
     let lucky = 0;

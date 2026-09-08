@@ -6,7 +6,7 @@ export interface AllData {
   animals: Animal[];
   interactions: InteractionsData;
   transformations: TransformationData;
-  seasonalStrength: Record<string, string[]>;
+  seasonalStrength: Record<string, Record<string, string[]>>;
 }
 
 export class DataLoader {
@@ -82,7 +82,7 @@ export class DataLoader {
     const animals = await this.loadJson<Animal[]>('animals.json');
     const interactions = await this.loadJson<InteractionsData>('interactions.json');
     const transformations = await this.loadJson<TransformationData>('transformations.json');
-    const seasonalStrength = await this.loadJson<Record<string, string[]>>('seasonal_strength.json');
+    const seasonalStrength = await this.loadJson<Record<string, Record<string, string[]>>>('seasonal_strength.json');
     
     return {
       animals,

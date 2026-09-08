@@ -14,10 +14,10 @@ const RING_NAMES: string[] = [
   "井", "鬼", "柳", "星", "张", "翼", "轸"
 ];
 
-// 宿名环上位置（容器百分比坐标）
+// 宿名环上位置（vp 绝对坐标，与窗口尺寸解耦）
 interface RingPos {
-  x: string;
-  y: string;
+  x: number;
+  y: number;
 }
 
 // 点缀星（百分比坐标）
@@ -103,6 +103,8 @@ struct Splash {
       }
       .width('100%')
       .padding({ left: 20, right: 20, bottom: px2vp(this.navBarPx) + 18 })
+      .position({ x: 0, y: '100%' })
+      .markAnchor({ x: 0, y: '100%' })
     }
     .width('100%')
     .height('100%')
@@ -130,7 +132,7 @@ struct Splash {
     .hitTestBehavior(HitTestMode.None)
   }
 
-  /** 二十八宿名环：按圆周排布，整环缓转 */
+  /** 二十八宿名环：按圆周排布，整环缓转（vp 定位，环心=屏心上方 110vp） */
   @Builder
   RingLayer() {
     Stack() {
@@ -142,18 +144,17 @@ struct Splash {
           .markAnchor({ x: '50%', y: '50%' })
       }, (name: string) => name)
     }
-    .width('100%')
-    .aspectRatio(1)
+    .width(320)
+    .height(320)
     .rotate({ angle: this.ringAngle })
     .hitTestBehavior(HitTestMode.None)
-    .position({ x: '50%', y: '33%' })
-    .markAnchor({ x: '50%', y: '50%' })
+    .offset({ x: 0, y: -110 })
   }
 
-  /** 今日值日星：环心浮现 */
+  /** 今日值日星：环心浮现（与宿名环同一中心） */
   @Builder
   DailyStarLayer() {
-    Stack() {
+    Stack({ alignContent: Alignment.Center }) {
       Column({ space: 10 }) {
         if (this.dailyStar !== null) {
           Image(Theme.starImage(this.dailyStar.star))
@@ -167,6 +168,7 @@ struct Splash {
         }
       }
       .alignItems(HorizontalAlign.Center)
+      .offset({ x: 0, y: -110 })
     }
     .width('100%')
     .height('100%')
@@ -175,13 +177,14 @@ struct Splash {
     .scale({ x: this.showDaily ? 1 : 0.86, y: this.showDaily ? 1 : 0.86 })
   }
 
-  /** 宿名在环上的百分比位置（半径占容器 40%） */
+  /** 宿名在环上的 vp 坐标（容器 320×320，半径 128） */
   private ringPos(i: number): RingPos {
     const theta = (i * 2 * Math.PI) / 28 - Math.PI / 2;
-    const r = 40;
-    const x = 50 + r * Math.cos(theta);
-    const y = 50 + r * Math.sin(theta);
-    const pos: RingPos = { x: x.toFixed(1) + '%', y: y.toFixed(1) + '%' };
+    const r = 128;
+    const pos: RingPos = {
+      x: 160 + r * Math.cos(theta),
+      y: 160 + r * Math.sin(theta)
+    };
     return pos;
   }
 }

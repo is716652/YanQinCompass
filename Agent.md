@@ -119,7 +119,7 @@ entry/src/main/resources/rawfile/
 
 - **审核驳回（2026-09-07）**：首提人工审核驳回，意见"应用出现两个隐私弹窗"——账号已接入华为「标准化隐私声明托管服务」（系统自动弹平台标准隐私弹窗），应用内 Splash 又弹自定义授权弹窗 → 双弹窗。审核环境 HarmonyOS 6.1.0 / API 24。
 - **修复（按审核建议）**：删除 Splash 自定义授权弹窗（LegalConsentDialog）与LegalManager 同意标记检查；保留 Splash 底部《用户协议》《隐私政策》链接行、InputPage 页脚链接、Legal 两页面。LegalManager.ets 文件保留但已无引用。
-- **重新提审包**：`build/outputs/release/YanQinCompass-release-signed.app`（09-08 19:58，已验证包内弹窗代码移除、协议链接保留，签名链不变）。装机复验通过：首启无自定义弹窗、Splash/输入页正常、值日星随日期轮转（9/7 角木蛟→9/8 九金龙）。
+- **重新提审包**：`build/outputs/release/YanQinCompass-release-signed.app`（09-08 22:01 v1.0.1 候选：驳回修复【删自定义弹窗】+ 无障碍/导航条适配 + 旺衰四档引擎。装机复验：排盘正常、四档显示"秋季·囚"、无弹窗）。注意：旺衰四档 JSON 与引擎必须同步改（曾因只改数据未改引擎导致排盘报"数据加载失败"的中间态包）。
 - **上架产物**：`build/outputs/release/YanQinCompass-release-signed.app`（product=release 构建，已通过 AGC 包校验）。
 
 - **当前状态（2026-09-07）**：v1.0.0 已提交 AGC 人工审核，审核中。首提曾因"一句话简介/应用介绍/版本特性内容重复"被表单拦截，重写三段文案去重后提交成功（一句话=定义句；介绍=场景钩子「翻开手机，你就是钦天监的星官」+「」分节体例；特性=更新日志口吻，三段零重复）。
