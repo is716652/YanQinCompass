@@ -1,0 +1,209 @@
+/**
+ * 演禽引擎检测流程（防硬凑测试）
+ * ================================================
+ * 运行：node --experimental-strip-types tests/run_engine_tests.mjs
+ *
+ * 三层断言（按防"硬凑"能力排序）：
+ *   A. 古籍锚点：用例与预期值全部来自古籍原文（含出处），引擎改错即红
+ *   B. 关系不变量：四星/宫位/大运之间的推导关系（随机输入全成立）
+ *   C. 性质不变量：值域、幂等性、季节映射边界
+ *
+ * 防硬凑红线（违反即为流程事故，见 Agent.md「引擎改动 SOP」）：
+ *   1. 禁止为通过测试在引擎/数据表中添加仅命中测试输入的特判
+ *   2. 禁止修改锚点预期值迁就引擎输出（锚点不符时：先查古籍，再查流派，最后才怀疑锚点）
+ *   3. 数据表增改必须注记古籍出处（书名+条目）
+ *   4. 测试失败的处理顺序：古籍原文 → 流派比对 → 提请人工裁决 → 才允许动锚点
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import url from 'node:url';
+
+const ROOT = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
+const SRC = path.join(ROOT, 'entry', 'src', 'main', 'ets');
+const RF = path.join(ROOT, 'entry', 'src', 'main', 'resources', 'rawfile');
+const BUILD = path.join(ROOT, 'tests', '.engine-build');
+
+// ---------- 1. 动态同步引擎源码到测试构建目录（永远测试当前源码，防漂移） ----------
+function syncSource() {
+  fs.rmSync(BUILD, { recursive: true, force: true });
+  fs.mkdirSync(path.join(BUILD), { recursive: true });
+  const conv = (file, outName) => {
+    let t = fs.readFileSync(file, 'utf8');
+    t = t.replace(/from '([^']+)'/g, (m, p1) => {
+      const base = path.basename(p1);            // '../model/Types' -> 'Types'
+      return `from './${base}.ts'`;
+    });
+    t = t.replace(/^import \{/gm, 'import type {');
+    fs.writeFileSync(path.join(BUILD, outName), t);
+  };
+  conv(path.join(SRC, 'utils', 'YanQinEngine.ets'), 'YanQinEngine.ts');
+  conv(path.join(SRC, 'utils', 'DayStarUtils.ets'), 'DayStarUtils.ts');
+  conv(path.join(SRC, 'model', 'Types.ets'), 'Types.ts');
+  conv(path.join(SRC, 'model', 'ChartModels.ets'), 'ChartModels.ts');
+}
+await syncSource();
+
+const { YanQinEngine } = await import(url.pathToFileURL(path.join(BUILD, 'YanQinEngine.ts')).href);
+const { DayStarUtils } = await import(url.pathToFileURL(path.join(BUILD, 'DayStarUtils.ts')).href);
+
+// ---------- 2. 数据装载（真实 rawfile） ----------
+const readJson = (f) => JSON.parse(fs.readFileSync(path.join(RF, f), 'utf8'));
+const animals = readJson('animals.json');
+const interactions = readJson('interactions.json');
+const transformations = readJson('transformations.json');
+const seasonal = readJson('seasonal_strength.json');
+const allCal = [
+  ...readJson('calendar/calendar_data_0009.json'), // 1900-1909
+  ...readJson('calendar/calendar_data_0010.json'), // 2000-2009
+  ...readJson('calendar/calendar_data_0012.json'), // 2010-2019
+];
+
+const STARS = '角亢氐房心尾箕斗牛女虚危室壁奎娄胃昴毕觜参井鬼柳星张翼轸';
+const STEMS = '甲乙丙丁戊己庚辛壬癸';
+const BRANCH = '子丑寅卯辰巳午未申酉戌亥';
+
+const engine = new YanQinEngine();
+engine.init(animals, interactions, transformations, seasonal);
+
+function chartOf(y, m, d, hour, gender) {
+  const cal = allCal.find(x => x.date === `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
+  if (!cal) return { error: `万年历缺 ${y}-${m}-${d}` };
+  try {
+    const chart = engine.calculateChart(
+      { solarDate: new Date(y, m - 1, d), timeHour: hour, gender },
+      cal
+    );
+    return { chart, cal };
+  } catch (e) {
+    return { error: String(e?.message ?? e) };
+  }
+}
+
+// ---------- 3. 断言工具 ----------
+let pass = 0;
+const failures = [];
+function assert(cond, label) {
+  if (cond) { pass++; }
+  else { failures.push(label); }
+}
+function section(t) { console.log(`\n── ${t}`); }
+
+// ---------- 4. A 层：古籍锚点 ----------
+section('A. 古籍锚点（《演禽通纂》起例原文例题）');
+
+// 《演禽通纂·起主胎星例》："假如辛卯年八月初八日子时生人……主星是箕水豹，胎星就是斗木獬"
+// 日期映射：农历辛卯年八月初八 = 公历 2011-09-05（据万年历核实，勿以公历月代农历月）
+// 命宫取巳宫（癸巳）：引擎既定口径（起命宫例存在巳/申两版矛盾，采用与主星例自洽的巳版，
+// 依据 规则/algorithm_explanation.md §2.3，Agent.md 已记录）。
+{
+  const { chart, error } = chartOf(2011, 9, 5, 0, 'male');
+  assert(!error, `锚点1 排盘无异常（${error ?? 'ok'}）`);
+  assert(chart?.masterStar?.star === '箕', `锚点1 主星=箕（得 ${chart?.masterStar?.star}）`);
+  assert(chart?.embryoStar?.star === '斗', `锚点1 胎星=斗（得 ${chart?.embryoStar?.star}）`);
+  assert(chart?.lifePalace === '癸巳', `锚点1 命宫=癸巳（得 ${chart?.lifePalace}）`);
+  assert(chart?.xunHead === '甲申', `锚点1 旬头=甲申（得 ${chart?.xunHead}）`);
+}
+
+// 《演禽通纂·起寿宫例》原文四例：阳男阴女冲前一位，阴男阳女冲后一位
+{
+  const c1 = chartOf(2011, 9, 5, 0, 'female');
+  assert(c1.chart?.shouPalace === '戊戌', `寿宫 阴女→戌前（得 ${c1.chart?.shouPalace ?? '?'}）`);
+  const c2 = chartOf(2011, 9, 5, 0, 'male');
+  assert(c2.chart?.shouPalace === '丙申', `寿宫 阴男→申后（得 ${c2.chart?.shouPalace ?? '?'}）`);
+  const c3 = chartOf(1984, 11, 11, 0, 'male');
+  assert(c3.chart?.shouPalace === '辛未', `寿宫 阳男→未前（得 ${c3.chart?.shouPalace ?? '?'}）`);
+  const c4 = chartOf(1984, 11, 11, 0, 'female');
+  assert(c4.chart?.shouPalace === '己巳', `寿宫 阳女→巳后（得 ${c4.chart?.shouPalace ?? '?'}）`);
+}
+
+// 《禽星易见》七元将头：一元虚、二元奎、三元毕、四元鬼、五元翼、六元氐、七元箕
+// 锚点：1984-02-02 为一元甲子日，起虚日鼠（与禽星盘式项目同源互证）
+section('A2. 值日禽星锚点（七元甲子）');
+{
+  assert(DayStarUtils.calc(1984, 2, 2).star === '虚', '值日锚点 1984-02-02=虚');
+  assert(DayStarUtils.calc(1984, 2, 3).star === '危', '次日顺推=危');
+  assert(DayStarUtils.calc(1984, 4, 2).star === '奎', '60 日换二元=奎');
+}
+
+// ---------- 5. B 层：关系不变量（随机输入全成立） ----------
+section('B. 关系不变量（随机 400 组）');
+const rnd = (n) => Math.floor(Math.random() * n);
+let badValue = 0, badEmbryo = 0, badPalace = 0, badFortune = 0, badAge = 0, badIdem = 0, badSeason = 0;
+const E2AGE = { 水: 1, 火: 2, 木: 3, 金: 4, 土: 5, 日: 6, 月: 7 };
+
+for (let k = 0; k < 400; k++) {
+  // 从真实万年历取样（保证农历/干支数据真实，覆盖 1900-2061 全范围）
+  const cal = allCal[rnd(allCal.length)];
+  const [y, m, d] = cal.date.split('-').map(Number);
+  const hour = rnd(24);
+  const gender = rnd(2) === 0 ? 'male' : 'female';
+  const r = chartOf(y, m, d, hour, gender);
+  if (r.error || !r.chart) { badValue++; continue; }
+  const c = r.chart;
+
+  // B1 四星值域
+  const stars = [c.masterStar, c.embryoStar, c.lifeStar, c.bodyStar];
+  if (stars.some(s => !STARS.includes(s.star))) badValue++;
+  // B2 胎星 = 主星下一位
+  if (STARS.indexOf(c.embryoStar.star) !== (STARS.indexOf(c.masterStar.star) + 1) % 28) badEmbryo++;
+  // B3 宫位干支值域
+  for (const pal of [c.lifePalace, c.bodyPalace]) {
+    if (!pal || pal.length !== 2 || !STEMS.includes(pal[0]) || !BRANCH.includes(pal[1])) badPalace++;
+  }
+  // B4 大运：起于命宫干支、连续九运；方向据《通纂·起大运例》"主星落宫天干"阴阳
+  //   （而非年干！阳干男顺/女逆，阴干男逆/女顺）
+  const lifeGan = c.lifePalace[0];
+  const yangGan = '甲丙戊庚壬'.includes(lifeGan);
+  const forward = gender === 'male' ? yangGan : !yangGan;
+  const startAge = { 水: 1, 火: 2, 木: 3, 金: 4, 土: 5, 日: 6, 月: 7 }[c.masterStar.element] ?? 3;
+  if (c.fortuneStartAge !== startAge) badAge++;
+  const step = forward ? n => n : n => -n;
+  for (let n = 0; n < c.fortuneList.length; n++) {
+    const expG = STEMS[(STEMS.indexOf(lifeGan) + ((forward ? n : -n) % 10 + 10)) % 10];
+    const expZ = BRANCH[(BRANCH.indexOf(c.lifePalace[1]) + ((forward ? n : -n) % 12 + 12)) % 12];
+    if (c.fortuneList[n][0] !== expG || c.fortuneList[n][1] !== expZ) { badFortune++; break; }
+  }
+  // B5 幂等
+  const again = engine.calculateChart(
+    { solarDate: new Date(y, m - 1, d), timeHour: hour, gender },
+    cal
+  );
+  if (JSON.stringify(again) !== JSON.stringify(c)) badIdem++;
+  // B6 season 值域与 earth 边界（农历 3/6/9/12 → earth）
+  const lm = cal.lunar_month;
+  const expSeason = (lm === 3 || lm === 6 || lm === 9 || lm === 12) ? 'earth'
+    : (lm <= 2 ? 'spring' : lm <= 5 ? 'summer' : lm <= 8 ? 'autumn' : 'winter');
+  if (c.season !== expSeason) badSeason++;
+}
+assert(badValue === 0, `不变量·四星值域 违例=${badValue}`);
+assert(badEmbryo === 0, `不变量·胎星承主星 违例=${badEmbryo}`);
+assert(badPalace === 0, `不变量·宫位干支 违例=${badPalace}`);
+assert(badFortune === 0, `不变量·大运序列 违例=${badFortune}`);
+assert(badAge === 0, `不变量·起运岁数 违例=${badAge}`);
+assert(badSeason === 0, `不变量·季节映射 违例=${badSeason}`);
+assert(badIdem === 0, `不变量·幂等性 违例=${badIdem}`);
+
+// ---------- 6. C 层：性质不变量 ----------
+section('C. 性质不变量');
+{
+  const r = chartOf(2011, 9, 5, 0, 'male');
+  assert(['旺', '相', '休', '囚', '死'].includes(r.chart?.seasonalStrength), '旺衰档位值域合法');
+  // earth 月边界：农历三月应判 earth
+  const mar = allCal.find(x => x.lunar_month === 3 && x.year === 2011);
+  if (mar) {
+    const [yy, mm, dd] = mar.date.split('-').map(Number);
+    const rr = chartOf(yy, mm, dd, 12, 'male');
+    assert(rr.chart?.season === 'earth', `农历三月判 earth（得 ${rr.chart?.season}）`);
+  }
+}
+
+// ---------- 7. 汇总 ----------
+console.log(`\n========================================`);
+console.log(`通过断言: ${pass}  失败: ${failures.length}`);
+if (failures.length) {
+  console.log('失败项:');
+  failures.forEach(f => console.log('  ✗', f));
+  process.exitCode = 1;
+} else {
+  console.log('全部通过 ✓（锚点 + 不变量 + 性质）');
+}

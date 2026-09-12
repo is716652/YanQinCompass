@@ -69,6 +69,10 @@ struct InputPage {
     if (loader === null) {
       return;
     }
+    // 预热全部规则数据（结果页复用缓存，排盘页秒开）
+    loader.loadAllData().catch((err: Error) => {
+      console.error('[InputPage] preload allData failed:', err.message);
+    });
     loader.loadJson<BestiaryData>('bestiary.json').then((d: BestiaryData) => {
       for (const g of d.groups) {
         for (const s of g.stars) {
@@ -337,36 +341,14 @@ struct InputPage {
               });
             })
 
-          // 合规免责声明 + 协议链接
+          // 合规免责声明（协议查看：AGC 应用资料页 + 平台隐私托管弹窗）
           Text('本应用基于古籍《演禽通纂》三校本整理，仅供传统文化研究参考。')
             .fontSize(11)
             .fontColor($r('app.color.ink_secondary'))
             .textAlign(TextAlign.Center)
             .width('100%')
+            .padding({ bottom: px2vp(this.navBarPx) + 24 })
             .margin({ top: 4 })
-
-          Row({ space: 20 }) {
-            Text('《用户协议》')
-              .fontSize(11)
-              .fontColor($r('app.color.ink_secondary'))
-              .onClick(() => {
-                router.pushUrl({ url: 'pages/Legal/UserAgreement' }).catch((err: Error) => {
-                  console.error('Failed to push url:', err.message);
-                });
-              })
-            Text('《隐私政策》')
-              .fontSize(11)
-              .fontColor($r('app.color.ink_secondary'))
-              .onClick(() => {
-                router.pushUrl({ url: 'pages/Legal/PrivacyPolicy' }).catch((err: Error) => {
-                  console.error('Failed to push url:', err.message);
-                });
-              })
-          }
-          .justifyContent(FlexAlign.Center)
-          .width('100%')
-          .padding({ bottom: px2vp(this.navBarPx) + 16 })
-          .margin({ top: 4 })
         }
         .padding({ left: 20, right: 20 })
         .width('100%')

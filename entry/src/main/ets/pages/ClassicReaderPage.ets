@@ -124,7 +124,7 @@ struct ClassicReaderPage {
     .backgroundColor($r('app.color.paper_bg'))
   }
 
-  /** 目录视图：书卡 + 章节列表 */
+  /** 目录视图：书架固定 + 章节列表独立滚动（去 Scroll 嵌套，保证滚到底完整可见） */
   @Builder
   CatalogView() {
     Column() {
@@ -166,41 +166,6 @@ struct ClassicReaderPage {
               .fontColor($r('app.color.ink_secondary'))
               .lineHeight(19)
               .width('100%')
-
-            Divider().color($r('app.color.divider'))
-
-            // 章节列表
-            List({ space: 6 }) {
-              ForEach(this.book.chapters, (ch: ClassicChapter, idx: number) => {
-                ListItem() {
-                  Row({ space: 10 }) {
-                    Text(`${idx + 1}`)
-                      .fontSize(11)
-                      .fontColor($r('app.color.ink_secondary'))
-                      .width(26)
-                      .textAlign(TextAlign.End)
-                    Text(ch.title)
-                      .fontSize(14)
-                      .fontColor($r('app.color.ink_primary'))
-                      .maxLines(1)
-                      .layoutWeight(1)
-                    SymbolGlyph($r('sys.symbol.chevron_right'))
-                      .fontSize(22)
-                      .fontColor([$r('app.color.ink_secondary')])
-                  }
-                  .width('100%')
-                  .padding({ left: 12, right: 12, top: 13, bottom: 13 })
-                  .backgroundColor($r('app.color.card_bg'))
-                  .borderRadius(10)
-                  .onClick(() => {
-                    this.chapterIdx = idx;
-                    this.reading = true;
-                  })
-                }
-              }, (ch: ClassicChapter, idx: number) => `${idx}_${ch.title}`)
-            }
-            .width('100%')
-            .padding({ bottom: px2vp(this.navBarPx) + 8 })
           }
         }
         .padding(16)
@@ -208,12 +173,62 @@ struct ClassicReaderPage {
       }
       .scrollBar(BarState.Off)
       .width('100%')
-      .layoutWeight(1)
+
+      Divider().color($r('app.color.divider')).margin({ left: 16, right: 16 })
+
+      if (this.book !== null) {
+        List({ space: 6 }) {
+          ForEach(this.book.chapters, (ch: ClassicChapter, idx: number) => {
+            ListItem() {
+              Row({ space: 10 }) {
+                Text(`${idx + 1}`)
+                  .fontSize(11)
+                  .fontColor($r('app.color.ink_secondary'))
+                  .width(26)
+                  .textAlign(TextAlign.End)
+                Text(ch.title)
+                  .fontSize(14)
+                  .fontColor($r('app.color.ink_primary'))
+                  .maxLines(1)
+                  .layoutWeight(1)
+                SymbolGlyph($r('sys.symbol.chevron_right'))
+                  .fontSize(22)
+                  .fontColor([$r('app.color.ink_secondary')])
+              }
+              .width('100%')
+              .padding({ left: 12, right: 12, top: 13, bottom: 13 })
+              .backgroundColor($r('app.color.card_bg'))
+              .borderRadius(10)
+              .onClick(() => {
+                this.chapterIdx = idx;
+                this.reading = true;
+              })
+            }
+          }, (ch: ClassicChapter, idx: number) => `${idx}_${ch.title}`)
+        }
+        .scrollBar(BarState.Off)
+        .layoutWeight(1)
+        .width('100%')
+        .padding({ left: 16, right: 16, top: 8, bottom: px2vp(this.navBarPx) + 8 })
+      } else {
+        Column({ space: 12 }) {
+          LoadingProgress()
+            .width(44)
+            .height(44)
+            .color($r('app.color.cinnabar'))
+          Text('启卷中…')
+            .fontSize(13)
+            .fontColor($r('app.color.ink_secondary'))
+        }
+        .width('100%')
+        .layoutWeight(1)
+      }
     }
     .width('100%')
     .height('100%')
   }
 
+  /** 正文视图 */
   /** 正文视图 */
   @Builder
   ReadingView() {

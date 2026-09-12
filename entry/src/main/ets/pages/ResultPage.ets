@@ -24,7 +24,10 @@ struct ResultPage {
   private birthYear: number = new Date().getFullYear();
 
   aboutToAppear(): void {
-    this.loadData();
+    // 短暂延迟：让转场动画优先完成（数据经 InputPage 预热已缓存，加载近瞬时）
+    setTimeout(() => {
+      this.loadData();
+    }, 120);
   }
 
   private loadData(): void {

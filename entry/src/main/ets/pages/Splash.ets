@@ -33,25 +33,50 @@ struct Splash {
   @State showDaily: boolean = false;  // 今日值日星浮现
   @State dailyStar: DayStarResult | null = null;
   @StorageProp('navBarPx') navBarPx: number = 0;
+  private animTimer: number = -1;     // 环境动画定时器（页面隐藏时停止，避免转场掉帧）
+  private tickCount: number = 0;
 
   aboutToAppear(): void {
     const now = new Date();
     this.dailyStar = DayStarUtils.calc(now.getFullYear(), now.getMonth() + 1, now.getDate());
 
-    // 星宿名环：约 150 秒一圈，360 度与 0 度视觉重合，无限循环无缝
-    animateTo({ duration: 150000, iterations: -1, curve: Curve.Linear }, () => {
-      this.ringAngle = 360;
-    });
-    // 点缀星交错闪烁（各星 duration 随下标错开）
-    animateTo({ duration: 1700, iterations: -1, playMode: PlayMode.Alternate, curve: Curve.EaseInOut }, () => {
-      this.twinkle = true;
-    });
     // 今日值日星延迟浮现
     setTimeout(() => {
       animateTo({ duration: 2000, curve: Curve.EaseInOut }, () => {
         this.showDaily = true;
       });
     }, 500);
+
+    this.startAmbient();
+  }
+
+  /** 环境动画（定时器驱动：页面隐藏即停，回前台重启） */
+  private startAmbient(): void {
+    if (this.animTimer >= 0) {
+      return;
+    }
+    this.animTimer = setInterval(() => {
+      this.tickCount += 1;
+      this.ringAngle = (this.tickCount * 0.25) % 360;      // 约 115 秒/圈
+      if (this.tickCount % 128 === 0) {
+        this.twinkle = !this.twinkle;                       // 约 2 秒交错闪烁
+      }
+    }, 16);
+  }
+
+  private stopAmbient(): void {
+    if (this.animTimer >= 0) {
+      clearInterval(this.animTimer);
+      this.animTimer = -1;
+    }
+  }
+
+  onPageShow(): void {
+    this.startAmbient();
+  }
+
+  onPageHide(): void {
+    this.stopAmbient();
   }
 
   build() {
@@ -78,33 +103,15 @@ struct Splash {
       // 今日值日星（环心浮现，触摸穿透）
       this.DailyStarLayer()
 
-      // 底部协议链接（可点击）
-      Row({ space: 20 }) {
-        Text('《用户协议》')
-          .fontSize(12)
-          .fontColor('rgba(255,255,255,0.85)')
-          .onClick(() => {
-            router.pushUrl({ url: 'pages/Legal/UserAgreement' }).catch((err: Error) => {
-              console.error('Failed to push url:', err.message);
-            });
-          })
-        Text('《隐私政策》')
-          .fontSize(12)
-          .fontColor('rgba(255,255,255,0.85)')
-          .onClick(() => {
-            router.pushUrl({ url: 'pages/Legal/PrivacyPolicy' }).catch((err: Error) => {
-              console.error('Failed to push url:', err.message);
-            });
-          })
-        Blank()
-        Text('点击任意处进入')
-          .fontSize(12)
-          .fontColor('rgba(255,255,255,0.55)')
-      }
-      .width('100%')
-      .padding({ left: 20, right: 20, bottom: px2vp(this.navBarPx) + 18 })
-      .position({ x: 0, y: '100%' })
-      .markAnchor({ x: 0, y: '100%' })
+      // 底部提示（协议入口已移至输入页页脚，启动页保持纯品牌页）
+      Text('点击任意处进入')
+        .fontSize(12)
+        .fontColor('rgba(255,255,255,0.55)')
+        .width('100%')
+        .textAlign(TextAlign.Center)
+        .padding({ bottom: px2vp(this.navBarPx) + 18 })
+        .position({ x: 0, y: '100%' })
+        .markAnchor({ x: 0, y: '100%' })
     }
     .width('100%')
     .height('100%')

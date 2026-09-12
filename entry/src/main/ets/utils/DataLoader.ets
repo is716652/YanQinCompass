@@ -13,6 +13,8 @@ export class DataLoader {
   private context: common.UIAbilityContext;
   // 万年历文件解析缓存（单文件约 1.6MB，避免选日期滚动时反复解析同一文件）
   private static calendarCache: Map<string, CalendarDay[]> = new Map();
+  // 规则 JSON 缓存（跨页面共享：InputPage 预热后 ResultPage 秒开）
+  private static jsonCache: Map<string, object> = new Map();
 
   constructor(context: common.UIAbilityContext) {
     this.context = context;
@@ -24,6 +26,10 @@ export class DataLoader {
    */
   async loadJson<T>(filename: string): Promise<T> {
     try {
+      const cached: object | undefined = DataLoader.jsonCache.get(filename);
+      if (cached !== undefined) {
+        return cached as T;
+      }
       console.info(`[DataLoader] Start loading ${filename}`);
       const resourceManager = this.context.resourceManager;
       const fileData = await resourceManager.getRawFileContent(filename);
@@ -34,6 +40,7 @@ export class DataLoader {
       // console.info(`[DataLoader] JSON string preview: ${jsonString.substring(0, 100)}`);
       
       const result = JSON.parse(jsonString) as T;
+      DataLoader.jsonCache.set(filename, result as object);
       console.info(`[DataLoader] Parsed ${filename} successfully`);
       return result;
     } catch (error) {
