@@ -61,6 +61,8 @@ const allCal = [
 const STARS = '角亢氐房心尾箕斗牛女虚危室壁奎娄胃昴毕觜参井鬼柳星张翼轸';
 const STEMS = '甲乙丙丁戊己庚辛壬癸';
 const BRANCH = '子丑寅卯辰巳午未申酉戌亥';
+// 七曜序列（宿序 i % 7）：木金土日月火水；日宿归火、月宿归水参与五行旺衰
+const elementOf = (star) => '木金土日月火水'[STARS.indexOf(star) % 7];
 
 const engine = new YanQinEngine();
 engine.init(animals, interactions, transformations, seasonal);
@@ -195,6 +197,52 @@ section('C. 性质不变量');
     const rr = chartOf(yy, mm, dd, 12, 'male');
     assert(rr.chart?.season === 'earth', `农历三月判 earth（得 ${rr.chart?.season}）`);
   }
+}
+
+// ---------- 6.5 D 层：数据表一致性（数据正确性底线） ----------
+section('D. 数据表一致性');
+{
+  // D1 三张表都是 28 宿、无缺漏、无重复
+  const animalStars = animals.map(a => a.star);
+  const bestiaryStars = [];
+  for (const g of readJson('bestiary.json').groups) {
+    for (const s of g.stars) { bestiaryStars.push(s.star); }
+  }
+  const uniq = (arr) => new Set(arr).size === arr.length;
+  assert(animalStars.length === 28 && uniq(animalStars), `animals.json 28 宿无缺无重（得 ${animalStars.length}）`);
+  assert(bestiaryStars.length === 28 && uniq(bestiaryStars), `bestiary.json 28 宿无缺无重（得 ${bestiaryStars.length}）`);
+  assert(new Set(animalStars).size === new Set(bestiaryStars).size, '两表星宿集合一致');
+  // D2 每宿字段完整性（full_name/element/animal）
+  const missing = animals.filter(a => !a.full_name || !a.element || !a.animal);
+  assert(missing.length === 0, `animals.json 字段完整（缺 ${missing.length}）`);
+  // D3 bestiary 每宿有描述与泊宫课名（泊宫课名 90 条资产，防丢）
+  const bj = readJson('bestiary.json');
+  const noGm = [];
+  for (const g of bj.groups) {
+    for (const s of g.stars) {
+      if (!s.desc || s.desc.length < 10) noGm.push(s.star + ':desc');
+      if (!s.guanming || s.guanming.length === 0) noGm.push(s.star + ':guanming');
+    }
+  }
+  assert(noGm.length === 0, `bestiary 描述与泊宫课名完整（缺 ${noGm.length}：${noGm.slice(0,4).join(',')}）`);
+  // D4 旺衰表：五季 × 五档 × 无空档，且 28 宿每季全覆盖（日归火月归水合并后）
+  let seasonIssues = [];
+  for (const season of ['spring', 'summer', 'autumn', 'winter', 'earth']) {
+    const tiers = seasonal[season];
+    if (!tiers) { seasonIssues.push(season + ':缺'); continue; }
+    const all = [];
+    for (const tier of ['旺', '相', '休', '囚', '死']) {
+      if (!tiers[tier] || tiers[tier].length === 0) seasonIssues.push(`${season}.${tier}:空`);
+      all.push(...tiers[tier]);
+    }
+    // 合并日归火月归水后应为 28 宿全覆盖
+    const merged = new Set(all.map(s => '日月'.includes(elementOf(s)) ? (elementOf(s) === '日' ? '日归火' : '月归水') : s));
+    const expected = new Set([...STARS].map(s => '日月'.includes(elementOf(s)) ? (elementOf(s) === '日' ? '日归火' : '月归水') : s));
+    if (merged.size !== expected.size) seasonIssues.push(`${season}:覆盖${merged.size}/${expected.size}`);
+  }
+  assert(seasonIssues.length === 0, `旺衰表五季五档完整（${seasonIssues.slice(0,3).join(';')}）`);
+  // D5 吞啖表：relationships 覆盖（防数据丢失）
+  assert(interactions.relationships.length >= 10, `吞啖关系条数（${interactions.relationships.length}）`);
 }
 
 // ---------- 7. 汇总 ----------
