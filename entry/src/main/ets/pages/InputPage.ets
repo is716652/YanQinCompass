@@ -294,7 +294,7 @@ struct InputPage {
             })
 
           // 鉴形剧本入口
-          Button('星官研习 · 鉴形第一案')
+          Button('星官研习 · 鉴形断案')
             .width('100%')
             .height(44)
             .fontSize(14)
@@ -320,6 +320,22 @@ struct InputPage {
             .onClick(() => {
               router.pushUrl({
                 url: 'pages/BestiaryPage'
+              }).catch((err: Error) => {
+                console.error('Failed to push url:', err.message);
+              });
+            })
+
+          // 算法口径说明入口
+          Button('算法口径说明')
+            .width('100%')
+            .height(44)
+            .fontSize(14)
+            .type(ButtonType.Capsule)
+            .backgroundColor($r('app.color.chip_bg'))
+            .fontColor($r('app.color.cinnabar'))
+            .onClick(() => {
+              router.pushUrl({
+                url: 'pages/AlgorithmNotesPage'
               }).catch((err: Error) => {
                 console.error('Failed to push url:', err.message);
               });

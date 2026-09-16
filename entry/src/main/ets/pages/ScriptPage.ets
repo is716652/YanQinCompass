@@ -4,6 +4,13 @@ import { DataLoader } from '../utils/DataLoader';
 import { Theme } from '../utils/Theme';
 import { ScriptCase, ScriptBoardCard, ScriptClue } from '../model/ScriptModels';
 
+/** 案例清单条目 */
+interface CaseMeta {
+  file: string;
+  title: string;
+  era: string;
+}
+
 /**
  * 鉴形 · 剧本案页面
  *
@@ -17,8 +24,14 @@ import { ScriptCase, ScriptBoardCard, ScriptClue } from '../model/ScriptModels';
 struct ScriptPage {
   @State caseData: ScriptCase | null = null;
   @State loadError: string = '';
-  @State stage: number = 0;          // 0 卷宗 / 1 解盘 / 2 结局
+  @State stage: number = -1;         // -1 案例选择 / 0 卷宗 / 1 观盘 / 2 结局
+  @State caseIdx: number = 0;
   @State foundIds: string[] = [];    // 已发现的眼位 id
+  // 案例清单（新增案例：rawfile/scripts/ 加数据文件后在此登记）
+  private readonly caseList: CaseMeta[] = [
+    { file: 'scripts/case_xiangyu.json', title: '第一案 · 西楚霸王', era: '秦末汉初 · 项羽' },
+    { file: 'scripts/case_songtaizu.json', title: '第二案 · 宋太祖', era: '五代北宋 · 赵匡胤' }
+  ];
   @State storyText: string | null = null;  // 眼位剧情浮层
   @State toastText: string | null = null;  // 困惑/沉思提示浮层
   @State toastTitle: string = '沉思';       // 提示浮层标题
@@ -26,11 +39,16 @@ struct ScriptPage {
   @StorageProp('navBarPx') navBarPx: number = 0;
   private dataLoader: DataLoader | null = null;
 
-  aboutToAppear(): void {
+  /** 打开指定案例（加载 JSON 并进入卷宗） */
+  private openCase(idx: number): void {
     const context = getContext(this) as common.UIAbilityContext;
     this.dataLoader = new DataLoader(context);
-    this.dataLoader.loadJson<ScriptCase>('scripts/case_xiangyu.json').then((cs: ScriptCase) => {
+    this.caseIdx = idx;
+    const meta = this.caseList[idx];
+    this.dataLoader.loadJson<ScriptCase>(meta.file).then((cs: ScriptCase) => {
       this.caseData = cs;
+      this.foundIds = [];
+      this.stage = 0;
     }).catch((err: Error) => {
       console.error('[ScriptPage] load case failed:', err.message);
       this.loadError = '剧本加载失败：' + err.message;
@@ -40,7 +58,9 @@ struct ScriptPage {
   build() {
     Stack() {
       Column() {
-        if (this.loadError !== '') {
+        if (this.stage === -1) {
+          this.CaseSelectView()
+        } else if (this.loadError !== '') {
           Text(this.loadError)
             .fontSize(14)
             .fontColor($r('app.color.cinnabar'))
@@ -94,7 +114,7 @@ struct ScriptPage {
             .fontSize(24)
             .fontColor([$r('app.color.ink_primary')])
             .onClick(() => {
-              router.back();
+              this.stage = -1;
             })
           Text(this.caseData !== null ? this.caseData.chapterLabel : '')
             .fontSize(16)
@@ -369,6 +389,77 @@ struct ScriptPage {
     .onClick(() => {
       this.onCardTap(card);
     })
+  }
+
+  /** 案例选择（鉴形研习首页，Flex 卡片——与图鉴页同款已验证结构） */
+  @Builder
+  CaseSelectView() {
+    Column() {
+      Row({ space: 8 }) {
+        SymbolGlyph($r('sys.symbol.chevron_left'))
+          .fontSize(24)
+          .fontColor([$r('app.color.ink_primary')])
+          .onClick(() => {
+            router.back();
+          })
+        Text('鉴形研习')
+          .fontSize(18)
+          .fontWeight(FontWeight.Bold)
+          .fontColor($r('app.color.ink_primary'))
+      }
+      .width('100%')
+      .padding({ left: 12, right: 16, top: px2vp(this.statusBarPx) + 12, bottom: 12 })
+      .backgroundColor($r('app.color.card_bg'))
+
+      Column({ space: 14 }) {
+        Text('以剧本形式演绎古籍断案：读卷宗、寻眼位、断成败——与千年前的古籍神断对勘。')
+          .fontSize(12)
+          .fontColor($r('app.color.ink_secondary'))
+          .lineHeight(20)
+          .width('100%')
+
+        Flex({ wrap: FlexWrap.Wrap }) {
+          ForEach(this.caseList, (meta: CaseMeta, idx: number) => {
+            Column({ space: 6 }) {
+              Text(meta.title)
+                .fontSize(17)
+                .fontWeight(FontWeight.Bold)
+                .fontColor($r('app.color.ink_primary'))
+              Text(meta.era)
+                .fontSize(12)
+                .fontColor($r('app.color.ink_secondary'))
+              Row({ space: 6 }) {
+                Text('研习')
+                  .fontSize(11)
+                  .fontColor($r('app.color.cinnabar'))
+                SymbolGlyph($r('sys.symbol.chevron_right'))
+                  .fontSize(14)
+                  .fontColor([$r('app.color.cinnabar')])
+              }
+            }
+            .alignItems(HorizontalAlign.Start)
+            .width('46%')
+            .padding(14)
+            .margin({ right: 12, bottom: 12 })
+            .backgroundColor($r('app.color.card_bg'))
+            .borderRadius(14)
+            .onClick(() => {
+              console.info('[ScriptPage] card clicked idx=' + idx);
+              this.openCase(idx);
+            })
+          }, (meta: CaseMeta) => meta.file)
+        }
+        .width('100%')
+      }
+      .width('100%')
+      .layoutWeight(1)
+      .alignItems(HorizontalAlign.Start)
+    }
+    .width('100%')
+    .height('100%')
+    .padding({ bottom: px2vp(this.navBarPx) })
+    .backgroundColor($r('app.color.paper_bg'))
+    .alignItems(HorizontalAlign.Start)
   }
 
   /** 浮层（遮罩 + 卡片 + 继续按钮） */
