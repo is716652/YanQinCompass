@@ -172,6 +172,7 @@ struct ClassicReaderPage {
         .width('100%')
       }
       .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
       .width('100%')
 
       Divider().color($r('app.color.divider')).margin({ left: 16, right: 16 })
@@ -207,6 +208,7 @@ struct ClassicReaderPage {
           }, (ch: ClassicChapter, idx: number) => `${idx}_${ch.title}`)
         }
         .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
         .layoutWeight(1)
         .width('100%')
         .padding({ left: 16, right: 16, top: 8, bottom: px2vp(this.navBarPx) + 8 })
@@ -256,6 +258,7 @@ struct ClassicReaderPage {
         .alignItems(HorizontalAlign.Start)
       }
       .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
       .width('100%')
       .layoutWeight(1)
 

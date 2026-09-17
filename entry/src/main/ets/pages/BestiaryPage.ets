@@ -91,6 +91,7 @@ struct BestiaryPage {
             .width('100%')
           }
           .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
           .width('100%')
           .layoutWeight(1)
         }
@@ -233,6 +234,7 @@ struct BestiaryPage {
         .alignItems(HorizontalAlign.Center)
       }
       .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
       .width('100%')
       .height('100%')
     }

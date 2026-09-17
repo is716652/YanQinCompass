@@ -370,6 +370,7 @@ struct InputPage {
         .width('100%')
       }
       .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
       .width('100%')
       .height('100%')
     }

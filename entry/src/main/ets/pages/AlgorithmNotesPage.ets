@@ -117,6 +117,7 @@ struct AlgorithmNotesPage {
         .alignItems(HorizontalAlign.Start)
       }
       .scrollBar(BarState.Off)
+      .edgeEffect(EdgeEffect.Spring)
       .width('100%')
       .layoutWeight(1)
     }

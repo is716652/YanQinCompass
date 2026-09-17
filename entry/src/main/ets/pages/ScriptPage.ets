@@ -433,7 +433,7 @@ struct ScriptPage {
                   .fontSize(11)
                   .fontColor($r('app.color.cinnabar'))
                 SymbolGlyph($r('sys.symbol.chevron_right'))
-                  .fontSize(14)
+                  .fontSize(20)
                   .fontColor([$r('app.color.cinnabar')])
               }
             }
