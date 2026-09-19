@@ -3,6 +3,7 @@ import { router } from '@kit.ArkUI';
 import { DataLoader } from '../utils/DataLoader';
 import { LunarFormatter } from '../utils/LunarFormatter';
 import { DayStarUtils, DayStarResult } from '../utils/DayStarUtils';
+import { DailyTheater } from '../utils/DailyTheater';
 import { Theme } from '../utils/Theme';
 import { BestiaryData, StarEntry } from '../model/BestiaryModels';
 import { TransformationData } from '../model/Types';
@@ -27,6 +28,7 @@ struct InputPage {
   // 值日禽星（随选定日期变化）
   @State daily: DayStarResult | null = null;
   @State dailyHuaDaoText: string = '';
+  @State theaterText: string = '';
   @StorageProp('statusBarPx') statusBarPx: number = 0;
   @StorageProp('navBarPx') navBarPx: number = 0;
   private bestiaryMap: Record<string, StarEntry> = {};
@@ -107,6 +109,13 @@ struct InputPage {
       }
     }
     this.dailyHuaDaoText = hua;
+    // 每日占断：泊宫课名 + 化道意象
+    const entry = this.bestiaryMap[this.daily.star];
+    this.theaterText = DailyTheater.build(
+      this.daily.fullName, day.day_zhi,
+      entry?.guanming,
+      hua !== '' ? hua.split('、') : []
+    );
   }
 
   /** 选定日期后即时回显农历与干支（万年历本地查询） */
@@ -411,6 +420,15 @@ struct InputPage {
             .fontColor($r('app.color.ink_secondary'))
             .maxLines(2)
             .lineHeight(17)
+
+          if (this.theaterText !== '') {
+            Text(this.theaterText)
+              .fontSize(12)
+              .fontColor($r('app.color.ink_primary'))
+              .lineHeight(20)
+              .width('100%')
+              .margin({ top: 6 })
+          }
         }
         .alignItems(HorizontalAlign.Start)
         .layoutWeight(1)
