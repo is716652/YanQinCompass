@@ -24,3 +24,6 @@ node_modules
 .DS_Store
 *.log
 EOF
+
+# 引擎测试临时构建目录（每次测试自动重建）
+tests/.engine-build/
