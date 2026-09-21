@@ -38,6 +38,7 @@ function syncSource() {
   };
   conv(path.join(SRC, 'utils', 'YanQinEngine.ets'), 'YanQinEngine.ts');
   conv(path.join(SRC, 'utils', 'DayStarUtils.ets'), 'DayStarUtils.ts');
+  conv(path.join(SRC, 'utils', 'GejuEngine.ets'), 'GejuEngine.ts');
   conv(path.join(SRC, 'model', 'Types.ets'), 'Types.ts');
   conv(path.join(SRC, 'model', 'ChartModels.ets'), 'ChartModels.ts');
 }
@@ -45,6 +46,7 @@ await syncSource();
 
 const { YanQinEngine } = await import(url.pathToFileURL(path.join(BUILD, 'YanQinEngine.ts')).href);
 const { DayStarUtils } = await import(url.pathToFileURL(path.join(BUILD, 'DayStarUtils.ts')).href);
+const { GejuEngine } = await import(url.pathToFileURL(path.join(BUILD, 'GejuEngine.ts')).href);
 
 // ---------- 2. 数据装载（真实 rawfile） ----------
 const readJson = (f) => JSON.parse(fs.readFileSync(path.join(RF, f), 'utf8'));
@@ -244,6 +246,97 @@ section('D. 数据表一致性');
   // D5 吞啖表：relationships 覆盖（防数据丢失）
   assert(interactions.relationships.length >= 10, `吞啖关系条数（${interactions.relationships.length}）`);
 }
+
+// ---------- 6.8 E 层：格局判定（《演禽通纂》上格/下格，geju.json + GejuEngine） ----------
+section('E. 格局判定（geju.json + GejuEngine）');
+{
+  const gejuData = readJson('geju.json');
+  const geju = gejuData.geju;
+  GejuEngine.init(gejuData);
+
+  // E1 数据完整性（防缺漏、防非法值、防无出处）
+  const upper = geju.filter(g => g.tier === 'upper');
+  const lower = geju.filter(g => g.tier === 'lower');
+  assert(geju.length === 57 && upper.length === 37 && lower.length === 20,
+    `格局条数 57=上37+下20（原书题上38缺一待考；得 总${geju.length}/上${upper.length}/下${lower.length}）`);
+  assert(new Set(geju.map(g => g.id)).size === geju.length, '格局 id 无重复');
+  const badStars = geju.filter(g => g.stars.length === 0 || g.stars.some(s => !STARS.includes(s)));
+  assert(badStars.length === 0, `格局星宿合法非空（违例 ${badStars.map(g => g.id).join(',') || '无'}）`);
+  const badPal = geju.filter(g => g.palace.some(p => !BRANCH.includes(p)));
+  assert(badPal.length === 0, `格局泊宫地支合法（违例 ${badPal.map(g => g.id).join(',') || '无'}）`);
+  const badSeas = geju.filter(g => g.seasons.some(s => !['spring', 'summer', 'autumn', 'winter'].includes(s)));
+  const badDn = geju.filter(g => !['', 'day', 'night'].includes(g.dayNight));
+  assert(badSeas.length === 0 && badDn.length === 0, '格局季节/昼夜代码合法');
+  const noText = geju.filter(g => !g.text || g.text.length < 5);
+  assert(noText.length === 0, `每格附古籍注文（缺 ${noText.length}）`);
+  // 可判定条目至少含一个可判条件；不判定/存疑条目必附注记（出处可回溯）
+  const noCond = geju.filter(g => g.evaluable && g.palace.length === 0 && g.seasons.length === 0
+    && g.dayNight === '' && g.lunarMonths.length === 0);
+  const noNote = geju.filter(g => (!g.evaluable || g.ambiguous) && (!g.note || g.note.length === 0));
+  assert(noCond.length === 0, `可判定条目至少一个可判条件（违例 ${noCond.map(g => g.id).join(',') || '无'}）`);
+  assert(noNote.length === 0, `不判定/存疑条目必附注记（缺 ${noNote.length}）`);
+
+  // E2 判定锚点与反例（盘面手造，用例与预期独立于引擎实现）
+  // 手造盘面：只含判定所需字段；命星固定奎泊子、身星固定虚泊子（与下述锚点无交叉）
+  function gejuChartOf(opt) {
+    return {
+      masterStar: { star: opt.master, full_name: `锚${opt.master}` },
+      embryoStar: { star: opt.embryo, full_name: `胎${opt.embryo}` },
+      lifeStar: { star: '奎', full_name: '命奎' },
+      bodyStar: { star: '虚', full_name: '身虚' },
+      lifePalace: opt.life, bodyPalace: '甲子',
+      embryoPalace: opt.embryoPalace ?? '乙丑',
+      season: opt.season, isDay: opt.isDay, lunarMonth: opt.lm ?? 1
+    };
+  }
+  const ids = (ms) => ms.map(x => x.geju.id);
+  // 锚点E1：《通纂》"蛟龙喜丑（角亢春夏生…龙用牛耕）"——角泊丑、春生
+  const m1 = GejuEngine.judge(gejuChartOf({ master: '角', embryo: '氐', life: '癸丑', season: 'spring', isDay: true })).matches;
+  assert(m1.some(x => x.geju.id === 'u01' && x.hitStar === '角' && x.hitPalace === '丑' && x.hitLabel === '主星'),
+    `锚点E1 角泊丑春生→蛟龙喜丑（得 [${ids(m1)}]）`);
+  // 反例E1：角泊午不入蛟龙喜丑
+  const m2 = GejuEngine.judge(gejuChartOf({ master: '角', embryo: '氐', life: '癸午', season: 'spring', isDay: true })).matches;
+  assert(!m2.some(x => x.geju.id === 'u01'), `反例E1 角泊午不入蛟龙喜丑（得 [${ids(m2)}]）`);
+  // 锚点E2："蝠当盛夏（夏秋夜生午位）"——女泊午秋夜命中；冬生为反例
+  const m3 = GejuEngine.judge(gejuChartOf({ master: '女', embryo: '虚', life: '庚午', season: 'autumn', isDay: false, embryoPalace: '甲辰' })).matches;
+  assert(m3.some(x => x.geju.id === 'u13' && x.hitLabel === '主星'), `锚点E2 女泊午秋夜→蝠当盛夏（得 [${ids(m3)}]）`);
+  const m4 = GejuEngine.judge(gejuChartOf({ master: '女', embryo: '虚', life: '庚午', season: 'winter', isDay: false, embryoPalace: '甲辰' })).matches;
+  assert(!m4.some(x => x.geju.id === 'u13'), `反例E2 冬生不入蝠当盛夏（得 [${ids(m4)}]）`);
+  // 反例E3：evaluable=false 永不命中——氐泊辰春夏夜，貉登巨浪（u02 需壬辰柱字）不得自动判定
+  const m5 = GejuEngine.judge(gejuChartOf({ master: '氐', embryo: '房', life: '壬辰', season: 'spring', isDay: false, embryoPalace: '甲戌' })).matches;
+  assert(!m5.some(x => x.geju.id === 'u02'), `反例E3 存疑条目不参与判定（得 [${ids(m5)}]）`);
+  // 锚点E4："獬入未宫"——胎星斗泊未命中，命中星与标签正确
+  const m6 = GejuEngine.judge(gejuChartOf({ master: '牛', embryo: '斗', life: '甲子', embryoPalace: '辛未', season: 'spring', isDay: true })).matches;
+  assert(m6.some(x => x.geju.id === 'u10' && x.hitLabel === '胎星' && x.hitStar === '斗' && x.hitPalace === '未'),
+    `锚点E4 胎星斗泊未→獬入未宫（得 [${ids(m6)}]）`);
+  // 锚点E5："猪怕刀砧（二月八月居申酉）"——农历月条件；非二八月为反例
+  const m7 = GejuEngine.judge(gejuChartOf({ master: '室', embryo: '危', life: '壬申', season: 'spring', isDay: true, lm: 8 })).matches;
+  assert(m7.some(x => x.geju.id === 'd13' && x.hitLabel === '主星'), `锚点E5 室泊申八月→猪怕刀砧（得 [${ids(m7)}]）`);
+  const m8 = GejuEngine.judge(gejuChartOf({ master: '室', embryo: '危', life: '壬申', season: 'spring', isDay: true, lm: 5 })).matches;
+  assert(!m8.some(x => x.geju.id === 'd13'), `反例E5 五月不入猪怕刀砧（得 [${ids(m8)}]）`);
+
+  // E3 真实盘不变量（随机 200 组：只命中可判定条目、命中星与标签合法、四季末不入任何带季节条件的格局）
+  const evaluableIds = new Set(geju.filter(g => g.evaluable).map(g => g.id));
+  let badJudge = 0;
+  for (let k = 0; k < 200; k++) {
+    const cal = allCal[rnd(allCal.length)];
+    const [y, m, d] = cal.date.split('-').map(Number);
+    const r = chartOf(y, m, d, rnd(24), rnd(2) === 0 ? 'male' : 'female');
+    if (r.error || !r.chart) { badJudge++; continue; }
+    const jr = GejuEngine.judge(r.chart);
+    for (const x of jr.matches) {
+      if (!evaluableIds.has(x.geju.id)) badJudge++;
+      if (!STARS.includes(x.hitStar) || !['主星', '胎星', '命星', '身星'].includes(x.hitLabel)) badJudge++;
+      if (!BRANCH.includes(x.hitPalace)) badJudge++;
+    }
+  }
+  assert(badJudge === 0, `格局判定·真实盘 200 组不变量（违例 ${badJudge}）`);
+  // E4 真实古籍例题盘可运行（锚点1：2011-09-05 子时男，主星箕）
+  const anc = chartOf(2011, 9, 5, 0, 'male');
+  const jrA = GejuEngine.judge(anc.chart);
+  assert(Array.isArray(jrA.matches), '真实古籍例题盘判定可运行');
+}
+
 
 // ---------- 7. 汇总 ----------
 console.log(`\n========================================`);

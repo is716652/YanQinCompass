@@ -2,6 +2,7 @@ import { router } from '@kit.ArkUI';
 import { YanQinEngine } from '../utils/YanQinEngine';
 import { DataLoader } from '../utils/DataLoader';
 import { ChartSummary } from '../utils/ChartSummary';
+import { GejuEngine, GejuData, GejuMatch } from '../utils/GejuEngine';
 import { Theme } from '../utils/Theme';
 import { YanQinChart } from '../model/ChartModels';
 import { Animal } from '../model/Types';
@@ -17,6 +18,7 @@ struct ResultPage {
   @State chart: YanQinChart | null = null;
   @State errorMessage: string = '';
   @State proExpanded: boolean = false;
+  @State gejuMatches: GejuMatch[] = [];   // 格局命中（GejuEngine.judge）
   @State isLoading: boolean = true;
   @StorageProp('statusBarPx') statusBarPx: number = 0;
   @StorageProp('navBarPx') navBarPx: number = 0;
@@ -67,18 +69,22 @@ struct ResultPage {
         data.seasonalStrength
       );
 
-      return dataLoader.loadCalendarDay(
-        date.getFullYear(),
-        date.getMonth() + 1,
-        date.getDate()
-      ).then(calendarDay => {
-        this.chart = this.engine.calculateChart({
-          solarDate: date,
-          timeHour: hour,
-          gender: gender
-        }, calendarDay);
-        this.isLoading = false;
-        console.info(`[ResultPage] chart set: master=${this.chart.masterStar.full_name} interactions=${this.chart.interactions.length}`);
+      return dataLoader.loadJson<GejuData>('geju.json').then((gejuData: GejuData) => {
+        GejuEngine.init(gejuData);
+        return dataLoader.loadCalendarDay(
+          date.getFullYear(),
+          date.getMonth() + 1,
+          date.getDate()
+        ).then(calendarDay => {
+          this.chart = this.engine.calculateChart({
+            solarDate: date,
+            timeHour: hour,
+            gender: gender
+          }, calendarDay);
+          this.gejuMatches = GejuEngine.judge(this.chart).matches;
+          this.isLoading = false;
+          console.info(`[ResultPage] chart set: master=${this.chart.masterStar.full_name} interactions=${this.chart.interactions.length} geju=${this.gejuMatches.length}`);
+        });
       });
     }).catch((err: Error) => {
       console.error("Failed to load data:", err);
@@ -151,6 +157,7 @@ struct ResultPage {
       Column({ space: 14 }) {
         this.SummaryCard(chart)
         this.StarsCard(chart)
+        this.GejuCard(chart)
         this.FortuneCard(chart)
         this.FlowYearCard(chart)
         this.InteractionCard(chart)
@@ -200,6 +207,9 @@ struct ResultPage {
               this.Badge(`${chart.season === 'earth' ? '四季末' : (SEASON_NAMES[chart.season] ?? '') + '季'} · ${chart.seasonalStrength}`)
             }
             this.Badge(`泊 ${chart.lifePalace} 宫`)
+            if (this.gejuMatches.some((m: GejuMatch) => m.hitLabel === '主星')) {
+              this.Badge('主星入格')
+            }
           }
         }
         .alignItems(HorizontalAlign.Start)
@@ -456,6 +466,78 @@ struct ResultPage {
     .alignItems(HorizontalAlign.Start)
   }
 
+  /** 格局卡：《演禽通纂》福禄上格/贫贱下格命中列表（数据 geju.json，判定 GejuEngine，本页只渲染） */
+  @Builder
+  GejuCard(chart: YanQinChart) {
+    Column({ space: 12 }) {
+      Row({ space: 8 }) {
+        Text('格局')
+          .fontSize(16)
+          .fontWeight(FontWeight.Medium)
+          .fontColor($r('app.color.ink_primary'))
+        Text('《演禽通纂》福禄上格 · 贫贱下格')
+          .fontSize(11)
+          .fontColor($r('app.color.ink_secondary'))
+          .layoutWeight(1)
+      }
+      .width('100%')
+
+      if (this.gejuMatches.length === 0) {
+        Text('盘中四星泊宫，未见可判定的上格或下格。')
+          .fontSize(13)
+          .fontColor($r('app.color.ink_secondary'))
+          .width('100%')
+      } else {
+        ForEach(this.gejuMatches, (m: GejuMatch) => {
+          Column({ space: 4 }) {
+            Row({ space: 8 }) {
+              Text(m.geju.tier === 'upper' ? '上格' : '下格')
+                .fontSize(11)
+                .fontColor(Color.White)
+                .backgroundColor(m.geju.tier === 'upper' ? $r('app.color.cinnabar') : $r('app.color.ink_secondary'))
+                .padding({ left: 6, right: 6, top: 2, bottom: 2 })
+                .borderRadius(4)
+              Text(`「${m.geju.name}」`)
+                .fontSize(16)
+                .fontWeight(FontWeight.Bold)
+                .fontColor(m.geju.tier === 'upper' ? $r('app.color.cinnabar') : $r('app.color.ink_primary'))
+            }
+            Text(`${m.hitLabel}${m.hitStarFull}泊${m.hitPalace}宫——${m.geju.verdict}`)
+              .fontSize(13)
+              .fontColor($r('app.color.ink_primary'))
+              .lineHeight(21)
+            Text(`原文：${m.geju.text}`)
+              .fontSize(11)
+              .fontColor($r('app.color.ink_secondary'))
+              .lineHeight(17)
+            if (m.geju.note !== '') {
+              Text(`注：${m.geju.note}`)
+                .fontSize(10)
+                .fontColor($r('app.color.ink_secondary'))
+                .lineHeight(16)
+            }
+          }
+          .alignItems(HorizontalAlign.Start)
+          .width('100%')
+          .padding(12)
+          .backgroundColor($r('app.color.chip_bg'))
+          .borderRadius(12)
+        }, (m: GejuMatch) => m.geju.id)
+
+        Text('判定口径：主星泊命宫、胎星泊胎宫、命星泊命宫、身星泊身宫；含柱中干支字要件或存疑的格局未参与自动判定，详见口径说明。')
+          .fontSize(10)
+          .fontColor($r('app.color.ink_secondary'))
+          .lineHeight(16)
+          .width('100%')
+      }
+    }
+    .padding(16)
+    .backgroundColor($r('app.color.card_bg'))
+    .borderRadius(16)
+    .width('100%')
+    .alignItems(HorizontalAlign.Start)
+  }
+
   /** 专业信息（默认折叠：旬头、宫位等过程数据） */
   @Builder
   ProCard(chart: YanQinChart) {
@@ -484,6 +566,7 @@ struct ResultPage {
         this.ProRow('寿星', chart.shouStar !== undefined ? `${chart.shouStar.full_name}（泊寿宫）` : '—')
         this.ProRow('旬头', `${chart.xunHead} · ${chart.xunStar.full_name}`)
         this.ProRow('旬头星起法', '按三元旬头表取旬头星，数生日归子，顺数至命宫')
+        this.ProRow('格局判定', '《通纂》上格37条（原书题38缺一待考）/下格20条；四星按泊宫绑定判定；含柱中干支字或存疑的19条仅展示不判定')
       }
     }
     .padding(16)

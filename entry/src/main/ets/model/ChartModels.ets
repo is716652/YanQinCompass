@@ -21,6 +21,7 @@ export interface YanQinChart {
   currentDayStar?: Animal;  // 流日星
   season?: string;          // 出生季节（spring/summer/autumn/winter，按农历月）
   isDay?: boolean;          // 昼生/夜生（5-18 点为昼，与引擎昼夜判定一致）
+  lunarMonth?: number;      // 农历月（1-12；格局判定的"二八月/三月"类条件用）
   // 综合分析
   huaDao: string[];       // 化道环境 (如 ["虎入焚山", "龙入大海"])
   interactions: string[]; // 吞啖关系描述 (如 ["主星克流年星(吉)", "流年星克胎星(凶)"])

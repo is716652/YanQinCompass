@@ -201,7 +201,8 @@ export class YanQinEngine {
       interactions: interactionList,
       seasonalStrength: seasonalStatus,
       season,
-      isDay
+      isDay,
+      lunarMonth
     };
   }
 
