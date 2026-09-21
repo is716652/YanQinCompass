@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "id": "xiangyu",
+      "file": "scripts/case_xiangyu.json",
+      "title": "第一案 · 西楚霸王",
+      "era": "秦末汉初 · 项羽"
+    },
+    {
+      "id": "songtaizu",
+      "file": "scripts/case_songtaizu.json",
+      "title": "第二案 · 宋太祖",
+      "era": "五代北宋 · 赵匡胤"
+    }
+  ]
+}

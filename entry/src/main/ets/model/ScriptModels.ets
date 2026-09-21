@@ -36,3 +36,16 @@ export interface ScriptCase {
   confusions: Record<string, string>;   // 干扰卡点击 → 困惑文案
   endings: Record<string, ScriptEnding>; // perfect / partial / failed
 }
+
+/** 卷宗架上的案件条目（scripts/index.json，选案清单） */
+export interface CaseMeta {
+  id: string;           // 案件标识
+  file: string;         // rawfile 下剧本 JSON 路径
+  title: string;        // 案名
+  era: string;          // 时代 · 人物
+}
+
+/** 案件清单 */
+export interface CaseIndex {
+  cases: CaseMeta[];
+}

@@ -2,14 +2,7 @@ import { router } from '@kit.ArkUI';
 import { common } from '@kit.AbilityKit';
 import { DataLoader } from '../utils/DataLoader';
 import { Theme } from '../utils/Theme';
-import { ScriptCase, ScriptBoardCard, ScriptClue } from '../model/ScriptModels';
-
-/** 案例清单条目 */
-interface CaseMeta {
-  file: string;
-  title: string;
-  era: string;
-}
+import { ScriptCase, ScriptBoardCard, ScriptClue, CaseMeta, CaseIndex } from '../model/ScriptModels';
 
 /**
  * 鉴形 · 剧本案页面
@@ -25,13 +18,8 @@ struct ScriptPage {
   @State caseData: ScriptCase | null = null;
   @State loadError: string = '';
   @State stage: number = -1;         // -1 案例选择 / 0 卷宗 / 1 观盘 / 2 结局
-  @State caseIdx: number = 0;
   @State foundIds: string[] = [];    // 已发现的眼位 id
-  // 案例清单（新增案例：rawfile/scripts/ 加数据文件后在此登记）
-  private readonly caseList: CaseMeta[] = [
-    { file: 'scripts/case_xiangyu.json', title: '第一案 · 西楚霸王', era: '秦末汉初 · 项羽' },
-    { file: 'scripts/case_songtaizu.json', title: '第二案 · 宋太祖', era: '五代北宋 · 赵匡胤' }
-  ];
+  @State caseList: CaseMeta[] = [];  // 案件清单（scripts/index.json；新增案例只改数据不改页面）
   @State storyText: string | null = null;  // 眼位剧情浮层
   @State toastText: string | null = null;  // 困惑/沉思提示浮层
   @State toastTitle: string = '沉思';       // 提示浮层标题
@@ -39,12 +27,22 @@ struct ScriptPage {
   @StorageProp('navBarPx') navBarPx: number = 0;
   private dataLoader: DataLoader | null = null;
 
-  /** 打开指定案例（加载 JSON 并进入卷宗） */
-  private openCase(idx: number): void {
+  aboutToAppear(): void {
     const context = getContext(this) as common.UIAbilityContext;
     this.dataLoader = new DataLoader(context);
-    this.caseIdx = idx;
-    const meta = this.caseList[idx];
+    this.dataLoader.loadJson<CaseIndex>('scripts/index.json').then((idx: CaseIndex) => {
+      this.caseList = idx.cases;
+    }).catch((err: Error) => {
+      console.error('[ScriptPage] load case index failed:', err.message);
+      this.loadError = '案件清单加载失败：' + err.message;
+    });
+  }
+
+  /** 打开指定案例（加载 JSON 并进入卷宗） */
+  private openCase(meta: CaseMeta): void {
+    const context = getContext(this) as common.UIAbilityContext;
+    this.dataLoader = new DataLoader(context);
+    this.loadError = '';
     this.dataLoader.loadJson<ScriptCase>(meta.file).then((cs: ScriptCase) => {
       this.caseData = cs;
       this.foundIds = [];
@@ -418,8 +416,20 @@ struct ScriptPage {
           .lineHeight(20)
           .width('100%')
 
+        if (this.loadError !== '') {
+          Text(this.loadError)
+            .fontSize(14)
+            .fontColor($r('app.color.cinnabar'))
+            .width('100%')
+        } else if (this.caseList.length === 0) {
+          Text('翻检卷宗…')
+            .fontSize(13)
+            .fontColor($r('app.color.ink_secondary'))
+            .width('100%')
+        }
+
         Flex({ wrap: FlexWrap.Wrap }) {
-          ForEach(this.caseList, (meta: CaseMeta, idx: number) => {
+          ForEach(this.caseList, (meta: CaseMeta) => {
             Column({ space: 6 }) {
               Text(meta.title)
                 .fontSize(17)
@@ -444,10 +454,9 @@ struct ScriptPage {
             .backgroundColor($r('app.color.card_bg'))
             .borderRadius(14)
             .onClick(() => {
-              console.info('[ScriptPage] card clicked idx=' + idx);
-              this.openCase(idx);
+              this.openCase(meta);
             })
-          }, (meta: CaseMeta) => meta.file)
+          }, (meta: CaseMeta) => meta.id)
         }
         .width('100%')
       }

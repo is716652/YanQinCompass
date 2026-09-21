@@ -167,6 +167,21 @@ entry/src/main/resources/rawfile/
 
 ## 修改记录
 
+### 2026-09-21：自审门禁上线 + 选案清单数据分离（本次）
+
+- **自审门禁（防硬凑写死的技术门禁）**：`.git/hooks/pre-commit`——每次 `git commit` 前自动跑
+  `node --experimental-strip-types tests/run_engine_tests.mjs`（28 断言：古籍锚点 / 关系不变量 400 组 /
+  性质 / 数据一致性），不过即拒绝提交。纯文档改动可 `YANQIN_SKIP_GATE=1 git commit ...` 临时跳过。
+  门禁基线 2026-09-21 实测全绿。
+- **三层分离纪律成文（用户 2026-09-21 定）**：新功能必须"数据（rawfile JSON，逐条注记古籍出处）/
+  算法（utils 纯函数引擎）/页面（只调用引擎）"分离；新增数据先有出处再入库；测试先行（锚点用例来自
+  独立知识源）；禁止为过测试特判输入。已补入「编码约定」。
+- **ScriptPage 选案清单数据分离**：案件清单从页面内硬编码数组改为 `rawfile/scripts/index.json`
+  （CaseMeta/CaseIndex 模型入 ScriptModels.ets，aboutToAppear 加载）——新增剧本案只改数据不改页面。
+  openCase 补 loadError 重置；选案视图补加载中/错误态。编译通过（21s），真机回归待设备连接。
+- 1.0.3 现状：每日占断（InputPage）/ 第二案宋太祖 / 口径页代码均就绪，versionCode 1000003；
+  **release .app 尚未打包**，待真机回归（选案→两案通关、口径页、每日占断）后打包。
+
 ### 2026-09-06：古籍阅读器（免费层收官件）（本次）
 
 - **数据**：`rawfile/classics/yanqin_tongzuan.md`（《演禽通纂》三校本 92KB）、
@@ -356,16 +371,24 @@ height('100%')` 会把行高撑爆，必须配 `rowsTemplate('1fr 1fr 1fr')` 固
 ## 已知限制 / 待办（按优先级）
 
 - [ ] 闰月"男女皆不除牛女"未实现（万年历 JSON 无闰月标记字段，需生成带闰月的数据或解析推断）
-- [ ] 原文命宫版本矛盾（巳 vs 申）尚未定论，当前取 §2.3 公式；如需严格考据请先核对四库本
+- [x] 原文命宫版本矛盾（巳 vs 申）→ 2026-09 口径研究定稿取巳版，见 `规则/口径研究.md`
 - [ ] `interactions.json` 的 `star` 字段（子天鼠/丑金龙…）与二十八宿为部分映射，`includes` 匹配个别组合可能漏判
-- [ ] 四时生旺仅"旺/休"两档，未实现"相/囚/死"（数据只有旺星列表，需补充表）
-- [ ] 未实现起大运（主星五行定起运岁数：水1火2木3金4土5日6月7，顺逆行按阴阳年/性别，见 algorithm_explanation.md §2.8）
-- [ ] 未实现寿星、大小限、流月/流日星等进阶排盘
+- [x] 四时生旺已升级四档（旺/相/休/囚/死，seasonal_strength.json + getSeasonalStrength）
+- [x] 起大运已实现（startAge 七曜数 + 命宫干阴阳×性别定顺逆）
+- [x] 寿宫寿星已实现
+- [x] 引擎测试已建：`tests/run_engine_tests.mjs` 28 断言 + pre-commit 门禁（2026-09-21）
 - [ ] 弃用 API（router/onChange/getContext 等）未清理，SDK 26 的 `Circle.fill` 需 apiAvailable 保护
-- [ ] 测试（`src/test`、`src/ohosTest`）仍为模板占位，未覆盖引擎算法
+- [ ] **格局判定（上格38/下格20）**：古籍结构化 `geju.json`（逐条出处）→ `GejuEngine.ets` 纯函数 →
+      测试锚点 → 命盘"入格"徽标（1.0.3 增量或 1.0.4 主内容，按三层分离纪律开发）
+- [ ] 1.0.3 真机回归（选案→两案通关 / 口径页 / 每日占断）→ release .app 打包 → 提审
+- [ ] 软著登记（材料基于源码与古籍整理文档，建议尽早）
 
 ## 编码约定
 
+- **自审门禁（2026-09-21 起）**：git commit 前自动跑引擎测试（`.git/hooks/pre-commit`），不过不提交；
+  数据表增改必须注记古籍出处；**禁止为过测试特判输入**（锚点用例必须来自独立知识源）
+- **三层分离**：数据放 `rawfile/*.json`（逐条出处）、算法放 utils 纯函数引擎、页面只调用引擎渲染，
+  禁止页面内硬编码业务数据（剧本案件清单等清单型数据同样走 JSON）
 - 所有注释、字符串文案使用中文
 - ArkTS 严格类型：禁止 `any`、`Record<string, Object>` 随意属性访问；引擎接口用 `Types.ets` 中定义的类型
 - 新增规则数据优先放 `rawfile/*.json`（附说明文档），算法放 `YanQinEngine.ets`，避免硬编码
