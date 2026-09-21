@@ -126,10 +126,10 @@ entry/src/main/resources/rawfile/
 - **上架产物**：`build/outputs/release/YanQinCompass-release-signed.app`（product=release 构建，
   已通过 AGC 包校验）。
   已通过 AGC 包校验进入自检）。
-- **上架标准命令（两步，顺序固定）**：
+- **上架标准命令（两步，顺序固定；assembleApp 必须 --mode project，2026-09-21 实测修正）**：
   ```bash
-  hvigorw assembleHap --mode module -p product=release -p buildMode=release --no-daemon  # 先触发 SignHap
-  hvigorw assembleApp  --mode module -p product=release -p buildMode=release --no-daemon  # 再打 .app
+  hvigorw assembleHap --mode module  -p product=release -p buildMode=release --no-daemon  # 先触发 SignHap
+  hvigorw assembleApp --mode project -p product=release -p buildMode=release --no-daemon  # 再打 .app（--mode module 会报任务不存在）
   ```
 - **双产品配置**（build-profile.json5，2026-09-07）：product=default（调试签名，hdc 装机）、
   product=release（发布签名，上架）；applyToProducts 已含两者。
@@ -166,6 +166,29 @@ entry/src/main/resources/rawfile/
   `02术数-146部/...` 目录路径）
 
 ## 修改记录
+
+### 2026-09-21：格局考据定案（维基文库终验）+ 1.0.3 真机回归通过 + 上架包打出
+
+- **考据定案**（代理抓维基文库全览页全文核对）：上格 37 条获**三方互证**（整理本 / ctext 行号
+  235-271 / 维基文库四库本），题载"三十八"系底本流传之缺，不补凑；四处校勘全部获维基文库异文
+  印证（蛟入/二字/与牛战/戊字）；"角元"诸本均作元（亢之形讹，义校）；新发现 u23 己未/巳未歧异
+  已注记。geju.json 与 整理文档同步更新（提交 b60456d）。
+- **真机回归全过**（设备 6XE0225A31003669，debug hap 装机）：选案页两案卡（index.json 驱动）、
+  第二案宋太祖卷宗、格局卡**空态+命中态**（2026-01-13 子时男：上格狼恃虎势[主星奎泊寅]+
+  下格狗窃虎穴[身星娄泊寅]，徽标/断语/原文/口径脚注全对，与 scan_geju_hit.mjs 预测一致）、
+  主星入格徽标、每日占断、值日星卡随日期联动。口径页第八项未单独点开（纯数组渲染，低风险）。
+- **1.0.3 上架包打出**：`build/outputs/release/YanQinCompass-release-signed.app`（16,979,752 字节，
+  已拷至 `上架材料/1.0.3/release_pkg/`）。校验：versionCode 1000003/1.0.3 ✓、包内含 geju.json 与
+  剧本数据 ✓、signed 比 unsigned 大 14.6KB（App 级签名块）✓。**待用户上传 AGC 提审。**
+- **★ SOP 修正（重要）**：`assembleApp` 不能加 `--mode module`（会报"Task assembleApp not found"，
+  hvigor 6.24.4 与 6.26.1 均如此——模块上下文里没有 App 级任务），必须 `--mode project`：
+  ```bash
+  hvigorw assembleHap --mode module  -p product=release -p buildMode=release --no-daemon  # 先 SignHap
+  hvigorw assembleApp --mode project -p product=release -p buildMode=release --no-daemon  # 再打 .app
+  ```
+  另：打包必须用 `command-line-tools-6.1.1-release`（hvigor 6.24.4）；无后缀 `command-line-tools`
+  已升级到 6.26.1，SOP 未在该版本验证。
+- 工具新增：`tests/scan_geju_hit.mjs`（扫真实日历找格局命中日期，真机演示/回归用）。
 
 ### 2026-09-21：格局判定 v1（上格/下格，三层分离标杆实现）
 
