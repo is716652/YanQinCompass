@@ -9,6 +9,7 @@
     "pages/Legal/PrivacyPolicy",
     "pages/Legal/UserAgreement",
     "pages/ClassicReaderPage",
-    "pages/AlgorithmNotesPage"
+    "pages/AlgorithmNotesPage",
+    "pages/ShizhanPage"
   ]
 }

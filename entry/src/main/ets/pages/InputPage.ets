@@ -318,6 +318,22 @@ struct InputPage {
               });
             })
 
+          // 演禽时占入口
+          Button('演禽时占 · 问事择时')
+            .width('100%')
+            .height(44)
+            .fontSize(14)
+            .type(ButtonType.Capsule)
+            .backgroundColor($r('app.color.chip_bg'))
+            .fontColor($r('app.color.cinnabar'))
+            .onClick(() => {
+              router.pushUrl({
+                url: 'pages/ShizhanPage'
+              }).catch((err: Error) => {
+                console.error('Failed to push url:', err.message);
+              });
+            })
+
           // 二十八宿图鉴入口
           Button('二十八宿图鉴')
             .width('100%')
