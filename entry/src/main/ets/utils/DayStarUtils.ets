@@ -40,6 +40,8 @@ export interface DayStarResult {
   fullName: string;   // 全名
   element: string;    // 七曜
   yuanName: string;   // 元名（一元…七元）
+  yuan: number;       // 元号（1-7，时禽起例用）
+  cycleDayIndex: number; // 420 日循环内日序（0-419）
   jiangIndex: number; // 第几将（1-4）
   jiangStar: string;  // 将星简称
 }
@@ -61,6 +63,8 @@ export class DayStarUtils {
       fullName: STAR_FULL[idx],
       element: STAR_ELEMENT[idx],
       yuanName: YUAN_NAMES[yuanIdx],
+      yuan: yuanIdx + 1,
+      cycleDayIndex: pos,
       jiangIndex: jiangIdx + 1,
       jiangStar: jiangStar
     };

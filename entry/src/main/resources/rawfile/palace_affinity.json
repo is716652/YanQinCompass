@@ -1,0 +1,61 @@
+{
+  "source": "《禽星易见·禽星喜忌宫》（规则/禽星易见-明-池本理.md L292 起）",
+  "semantics": "时禽（用事禽）泊占时地支：入 joyStars（乐宫）或 favorStars（得地）为吉；入 unfavorableStars 为忌；皆不在则按组默认宫性（kind：auspicious=吉 / neutral=平 / inauspicious=凶）",
+  "groups": [
+    {
+      "palaces": ["亥", "子"],
+      "name": "江湖水宫",
+      "kind": "auspicious",
+      "joyStars": ["箕", "壁", "参", "轸"],
+      "favorStars": ["角", "亢", "斗", "壁", "翼"],
+      "unfavorableStars": [],
+      "text": "亥子江湖水最深：水禽泊之为乐宫。角、亢、斗、壁、翼泊之得地。"
+    },
+    {
+      "palaces": ["寅", "卯"],
+      "name": "山林喜宫",
+      "kind": "auspicious",
+      "joyStars": [],
+      "favorStars": ["尾", "箕", "心", "胃", "井", "毕", "女", "危"],
+      "unfavorableStars": [],
+      "text": "寅山青翠卯为林：山禽泊之为喜宫。尾、箕、心、胃、犴、毕、女、危得地。"
+    },
+    {
+      "palaces": ["辰", "戌"],
+      "name": "冈岭宫",
+      "kind": "neutral",
+      "joyStars": [],
+      "favorStars": ["尾", "奎", "井", "张", "柳", "房"],
+      "unfavorableStars": ["箕"],
+      "text": "辰冈戌岭高千丈：箕泊辰为忌宫。尾、奎、犴、张、柳、房泊之得地。",
+      "note": "原文专言'箕泊辰为忌'，箕在辰戌两宫均按忌处理（存疑注记：辰/戌是否分论待考）"
+    },
+    {
+      "palaces": ["丑", "未"],
+      "name": "田园田宅宫",
+      "kind": "auspicious",
+      "joyStars": [],
+      "favorStars": ["虚", "室", "牛", "鬼", "星", "娄", "胃", "昴", "轸"],
+      "unfavorableStars": [],
+      "text": "丑未田园直万金：此为田宅宫。虚、室、牛、鬼、星、娄、胃、昴、轸泊之得地。"
+    },
+    {
+      "palaces": ["巳", "午"],
+      "name": "火宫恶逆",
+      "kind": "inauspicious",
+      "joyStars": [],
+      "favorStars": ["娄", "尾", "翼"],
+      "unfavorableStars": [],
+      "text": "惟有巳汤午是火：此为恶逆之宫，诸禽忌之，惟娄、尾、翼泊之吉。"
+    },
+    {
+      "palaces": ["申", "酉"],
+      "name": "刀砧刑害宫",
+      "kind": "inauspicious",
+      "joyStars": [],
+      "favorStars": ["亢", "娄", "井"],
+      "unfavorableStars": [],
+      "text": "申是刀兮酉是砧：此是刑害之宫，诸禽忌之，惟亢、娄、犴泊之吉。"
+    }
+  ]
+}

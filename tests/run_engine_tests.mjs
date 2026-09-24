@@ -39,6 +39,7 @@ function syncSource() {
   conv(path.join(SRC, 'utils', 'YanQinEngine.ets'), 'YanQinEngine.ts');
   conv(path.join(SRC, 'utils', 'DayStarUtils.ets'), 'DayStarUtils.ts');
   conv(path.join(SRC, 'utils', 'GejuEngine.ets'), 'GejuEngine.ts');
+  conv(path.join(SRC, 'utils', 'ShizhanEngine.ets'), 'ShizhanEngine.ts');
   conv(path.join(SRC, 'model', 'Types.ets'), 'Types.ts');
   conv(path.join(SRC, 'model', 'ChartModels.ets'), 'ChartModels.ts');
 }
@@ -47,6 +48,7 @@ await syncSource();
 const { YanQinEngine } = await import(url.pathToFileURL(path.join(BUILD, 'YanQinEngine.ts')).href);
 const { DayStarUtils } = await import(url.pathToFileURL(path.join(BUILD, 'DayStarUtils.ts')).href);
 const { GejuEngine } = await import(url.pathToFileURL(path.join(BUILD, 'GejuEngine.ts')).href);
+const { ShizhanEngine } = await import(url.pathToFileURL(path.join(BUILD, 'ShizhanEngine.ts')).href);
 
 // ---------- 2. 数据装载（真实 rawfile） ----------
 const readJson = (f) => JSON.parse(fs.readFileSync(path.join(RF, f), 'utf8'));
@@ -335,6 +337,80 @@ section('E. 格局判定（geju.json + GejuEngine）');
   const anc = chartOf(2011, 9, 5, 0, 'male');
   const jrA = GejuEngine.judge(anc.chart);
   assert(Array.isArray(jrA.matches), '真实古籍例题盘判定可运行');
+}
+
+
+// ---------- 6.9 F 层：时占引擎（时禽起例 + 喜忌宫，hour_star_table/palace_affinity） ----------
+section('F. 时占引擎（时禽起例 + 喜忌宫）');
+{
+  const hsTable = readJson('hour_star_table.json');
+  const palaceData = readJson('palace_affinity.json');
+  ShizhanEngine.init(hsTable, palaceData, seasonal, animals);
+  const ZHI12 = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+
+  // F1 元表完整性：7 元 × 7 曜，行 = C 循环移位（曜序+元号-1）
+  const C = hsTable.cycle;
+  assert(C.length === 7 && C.join('') === '虚鬼箕毕氐奎翼', '元表 C 循环 = 虚鬼箕毕氐奎翼（七元将头集）');
+  let tblBad = 0;
+  for (let k = 1; k <= 7; k++) {
+    const row = hsTable.table[String(k)];
+    if (!row) { tblBad++; continue; }
+    for (let i = 0; i < 7; i++) {
+      if (row[hsTable.yao_order[i]] !== C[(i + k - 1) % 7]) tblBad++;
+    }
+  }
+  assert(tblBad === 0, `元表 7×7 拉丁方阵校验（违例 ${tblBad}）`);
+
+  // F2 掌图例题锚点（《禽星易见·七元时禽掌图》11 例：元/直日宿→子时起星）
+  const yaoOf = (star) => '木金土日月火水'['角亢氐房心尾箕斗牛女虚危室壁奎娄胃昴毕觜参井鬼柳星张翼轸'.indexOf(star) % 7];
+  const examples = [
+    [1, '虚', '虚'], [1, '危', '鬼'], [1, '室', '箕'], [1, '壁', '毕'],
+    [1, '奎', '氐'], [1, '娄', '奎'], [1, '胃', '翼'],
+    [1, '昴', '虚'], [1, '毕', '鬼'], [1, '觜', '箕'],
+    [2, '奎', '奎']
+  ];
+  let exBad = 0;
+  for (const [yuan, dayStar, expectStart] of examples) {
+    if (ShizhanEngine.hourStartStar(yuan, yaoOf(dayStar)) !== expectStart) exBad++;
+  }
+  assert(exBad === 0, `掌图例题 11 例锚点（违例 ${exBad}）`);
+
+  // F3 十二时禽序列：一元甲子虚直日"至井十二宿为终"；一元乙丑危直日"至尾十二宿为终"
+  const seqA = ZHI12.map(z => ShizhanEngine.calcHourStar(1, yaoOf('虚'), z).star).join('');
+  const seqB = ZHI12.map(z => ShizhanEngine.calcHourStar(1, yaoOf('危'), z).star).join('');
+  assert(seqA === '虚危室壁奎娄胃昴毕觜参井', `一元虚直日十二时禽序列（得 ${seqA}）`);
+  assert(seqB === '鬼柳星张翼轸角亢氐房心尾', `一元危直日十二时禽序列（得 ${seqB}）`);
+
+  // F4 喜忌宫数据完整性：十二支全覆盖无重、星表合法、凶宫必有例外吉星
+  const covered = [];
+  let palBad = 0;
+  for (const g of palaceData.groups) {
+    for (const p of g.palaces) {
+      if (!BRANCH.includes(p) || covered.includes(p)) palBad++;
+      covered.push(p);
+    }
+    if ([...g.joyStars, ...g.favorStars, ...g.unfavorableStars].some(s => !STARS.includes(s))) palBad++;
+    if (g.kind === 'inauspicious' && g.favorStars.length === 0) palBad++;
+  }
+  assert(palBad === 0 && covered.length === 12, `喜忌宫十二支全覆盖+星表合法（违例 ${palBad}）`);
+
+  // F5 判定锚点：一元虚直日午时→时禽胃，泊午火宫（恶逆）=凶；明禽昼占当飞；旺衰值域
+  const wx = ShizhanEngine.calcHourStar(1, yaoOf('虚'), '午');
+  assert(wx.star === '胃', `一元虚直日午时时禽=胃（得 ${wx.star}）`);
+  const v1 = ShizhanEngine.judge({ hourStar: wx, hourZhi: '午', isDay: true, season: 'autumn' });
+  assert(v1 !== null && v1.favorable === '凶', `胃泊午（火宫恶逆）判凶（得 ${v1?.favorable}）`);
+  assert(v1?.flying === true, `胃土雉明禽昼占当飞（得 ${v1?.flying}）`);
+  assert(['旺', '相', '休', '囚', '死'].includes(v1?.strength ?? ''), `时禽旺衰值域（得 ${v1?.strength}）`);
+  // F6 刀砧宫：毕泊申默认凶（毕≠例外吉星）；娄泊申例外吉
+  const v2 = ShizhanEngine.judge({ hourStar: ShizhanEngine.calcHourStar(1, yaoOf('虚'), '申'), hourZhi: '申', isDay: true, season: 'spring' });
+  assert(v2 !== null && v2.favorable === '凶', `毕泊申（刀砧刑害）默认凶（得 ${v2?.favorable}）`);
+  const lou = { star: '娄', full_name: '娄金狗', element: '金', animal: '狗', note: '暗禽' };
+  const v3 = ShizhanEngine.judge({ hourStar: lou, hourZhi: '申', isDay: true, season: 'spring' });
+  assert(v3 !== null && v3.favorable === '吉', `娄泊申（例外泊之吉）判吉（得 ${v3?.favorable}）`);
+  // F7 元号锚点：DayStarUtils 暴露元号与循环日序
+  assert(DayStarUtils.calc(1984, 2, 2).yuan === 1 && DayStarUtils.calc(1984, 2, 2).cycleDayIndex === 0,
+    '锚点 1984-02-02 = 一元 / 日序 0');
+  assert(DayStarUtils.calc(1984, 4, 2).yuan === 2, '锚点 1984-04-02 = 二元（60 日换元）');
 }
 
 
