@@ -247,6 +247,27 @@ section('D. 数据表一致性');
   assert(seasonIssues.length === 0, `旺衰表五季五档完整（${seasonIssues.slice(0,3).join(';')}）`);
   // D5 吞啖表：relationships 覆盖（防数据丢失）
   assert(interactions.relationships.length >= 10, `吞啖关系条数（${interactions.relationships.length}）`);
+  // D6 旺衰表：五行四时旺衰标准定义逐宿校验（独立知识源=五行公理：
+  //    旺=当令、相=旺所生、休=生旺、囚=克旺、死=旺克；日归火、月归水）
+  const SHENG = { 木: '火', 火: '土', 土: '金', 金: '水', 水: '木' };
+  const KE = { 木: '土', 土: '水', 水: '火', 火: '金', 金: '木' };
+  const SEASON_WX = { spring: '木', summer: '火', autumn: '金', winter: '水', earth: '土' };
+  let wxBad = 0;
+  for (const [season, swx] of Object.entries(SEASON_WX)) {
+    for (const s of STARS) {
+      const yao = elementOf(s);
+      const wx = yao === '日' ? '火' : (yao === '月' ? '水' : yao);
+      let exp = '休';
+      if (wx === swx) exp = '旺';
+      else if (SHENG[swx] === wx) exp = '相';
+      else if (SHENG[wx] === swx) exp = '休';
+      else if (KE[wx] === swx) exp = '囚';
+      else if (KE[swx] === wx) exp = '死';
+      const tier = ['旺', '相', '休', '囚', '死'].find(t => seasonal[season][t].includes(s));
+      if (tier !== exp) wxBad++;
+    }
+  }
+  assert(wxBad === 0, `旺衰表·五行四时标准逐宿校验（违例 ${wxBad}）`);
 }
 
 // ---------- 6.8 E 层：格局判定（《演禽通纂》上格/下格，geju.json + GejuEngine） ----------
