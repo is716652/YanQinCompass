@@ -4,31 +4,42 @@
     "element": "木",
     "animal": "蛟",
     "full_name": "角木蛟",
-    "variations": ["蛇父", "雉母", "细颈", "上白婴", "四脚"]
+    "variations": [
+      "蛇父",
+      "雉母",
+      "细颈",
+      "上白婴",
+      "四脚"
+    ],
+    "note": "明禽"
   },
   {
     "star": "亢",
     "element": "金",
     "animal": "龙",
-    "full_name": "亢金龙"
+    "full_name": "亢金龙",
+    "note": "明禽"
   },
   {
     "star": "氐",
     "element": "土",
     "animal": "狢",
-    "full_name": "氐土狢"
+    "full_name": "氐土狢",
+    "note": "暗禽"
   },
   {
     "star": "房",
     "element": "日",
     "animal": "兔",
-    "full_name": "房日兔"
+    "full_name": "房日兔",
+    "note": "暗禽"
   },
   {
     "star": "心",
     "element": "月",
     "animal": "狐",
-    "full_name": "心月狐"
+    "full_name": "心月狐",
+    "note": "暗禽"
   },
   {
     "star": "尾",
@@ -48,61 +59,71 @@
     "star": "斗",
     "element": "木",
     "animal": "獬",
-    "full_name": "斗木獬"
+    "full_name": "斗木獬",
+    "note": "暗禽"
   },
   {
     "star": "牛",
     "element": "金",
     "animal": "牛",
-    "full_name": "牛金牛"
+    "full_name": "牛金牛",
+    "note": "明禽"
   },
   {
     "star": "女",
     "element": "土",
     "animal": "蝠",
-    "full_name": "女土蝠"
+    "full_name": "女土蝠",
+    "note": "暗禽"
   },
   {
     "star": "虚",
     "element": "日",
     "animal": "鼠",
-    "full_name": "虚日鼠"
+    "full_name": "虚日鼠",
+    "note": "暗禽"
   },
   {
     "star": "危",
     "element": "月",
     "animal": "燕",
-    "full_name": "危月燕"
+    "full_name": "危月燕",
+    "note": "明禽"
   },
   {
     "star": "室",
     "element": "火",
     "animal": "猪",
-    "full_name": "室火猪"
+    "full_name": "室火猪",
+    "note": "明禽"
   },
   {
     "star": "壁",
     "element": "水",
     "animal": "貐",
-    "full_name": "壁水貐"
+    "full_name": "壁水貐",
+    "note": "暗禽"
   },
   {
     "star": "奎",
     "element": "木",
     "animal": "狼",
-    "full_name": "奎木狼"
+    "full_name": "奎木狼",
+    "note": "暗禽"
   },
   {
     "star": "娄",
     "element": "金",
     "animal": "狗",
-    "full_name": "娄金狗"
+    "full_name": "娄金狗",
+    "note": "明禽"
   },
   {
     "star": "胃",
     "element": "土",
     "animal": "雉",
-    "full_name": "胃土雉"
+    "full_name": "胃土雉",
+    "note": "明禽"
   },
   {
     "star": "昴",
@@ -115,60 +136,70 @@
     "star": "毕",
     "element": "月",
     "animal": "乌",
-    "full_name": "毕月乌"
+    "full_name": "毕月乌",
+    "note": "明禽"
   },
   {
     "star": "觜",
     "element": "火",
     "animal": "猴",
-    "full_name": "觜火猴"
+    "full_name": "觜火猴",
+    "note": "明禽"
   },
   {
     "star": "参",
     "element": "水",
     "animal": "猿",
-    "full_name": "参水猿"
+    "full_name": "参水猿",
+    "note": "明禽"
   },
   {
     "star": "井",
     "element": "木",
     "animal": "犴",
-    "full_name": "井木犴"
+    "full_name": "井木犴",
+    "note": "明禽"
   },
   {
     "star": "鬼",
     "element": "金",
     "animal": "羊",
-    "full_name": "鬼金羊"
+    "full_name": "鬼金羊",
+    "note": "明禽"
   },
   {
     "star": "柳",
     "element": "土",
     "animal": "獐",
-    "full_name": "柳土獐"
+    "full_name": "柳土獐",
+    "note": "明禽"
   },
   {
     "star": "星",
     "element": "日",
     "animal": "马",
-    "full_name": "星日马"
+    "full_name": "星日马",
+    "note": "明禽"
   },
   {
     "star": "张",
     "element": "月",
     "animal": "鹿",
-    "full_name": "张月鹿"
+    "full_name": "张月鹿",
+    "note": "明禽"
   },
   {
     "star": "翼",
     "element": "火",
     "animal": "蛇",
-    "full_name": "翼火蛇"
+    "full_name": "翼火蛇",
+    "note": "暗禽"
   },
   {
     "star": "轸",
     "element": "水",
     "animal": "蚓",
-    "full_name": "轸水蚓"
+    "full_name": "轸水蚓",
+    "note": "暗禽"
   }
 ]

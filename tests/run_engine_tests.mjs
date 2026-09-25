@@ -268,6 +268,16 @@ section('D. 数据表一致性');
     }
   }
   assert(wxBad === 0, `旺衰表·五行四时标准逐宿校验（违例 ${wxBad}）`);
+  // D7 昼夜禽：note 全覆盖 + 与《禽星辑要》15.5 昼夜表逐宿一致（日禽16/夜禽12）
+  const DAY_STARS = '危室娄胃角亢牛昴毕觜参井鬼柳星张';
+  const NIGHT_STARS = '氐房心尾箕斗女虚壁奎翼轸';
+  let nnBad = 0;
+  for (const a of animals) {
+    const expectNote = DAY_STARS.includes(a.star) ? '明禽' : (NIGHT_STARS.includes(a.star) ? '暗禽' : '');
+    if (a.note !== expectNote) nnBad++;
+  }
+  assert(nnBad === 0 && DAY_STARS.length === 16 && NIGHT_STARS.length === 12,
+    `昼夜禽标注全覆盖且合 15.5 表（违例 ${nnBad}）`);
 }
 
 // ---------- 6.8 E 层：格局判定（《演禽通纂》上格/下格，geju.json + GejuEngine） ----------
