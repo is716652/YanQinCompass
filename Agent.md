@@ -167,6 +167,21 @@ entry/src/main/resources/rawfile/
 
 ## 修改记录
 
+### 2026-09-26（晚）：时占彼我吞啖 v1 收尾（真机验证通过）
+
+- **引擎**：`ShizhanEngine.judgeInteraction(hourStar, otherStar, lunarMonth, isDay)`——吞啖表
+  （eats/fears 双向）+ 歌诀补充 + 季节昼夜修正，与 YanQinEngine.checkInteraction 同源同数据
+  （interactions.json 由 init 注入）。口径：《易见》"时禽克日禽主快"——时禽制彼=吉、彼制时禽=凶。
+- **UI**：时占结果卡新增"彼我吞啖"区——①问事之日（vs 值日禽）②对本命（vs 用户本命主星，
+  新增 28 宿选择弹层，AppStorage `shizhanMasterStar` 全局记忆，选后实时重算）；白话断语
+  （ShizhanSummary）同步并入两路吞啖句。
+- **测试**：门禁 F8 四条（虚鼠食胃雉=凶 / 虚鼠制胃雉=吉 / 角轸无涉=平 / 虎制牛=吉），
+  基线 62→**66 断言**全绿。
+- **真机验证**（解锁后）：起盘（室火猪泊午）→ 吞啖区"问事之日：无吞啖之涉"（猪 vs 觜正确）→
+  设本命井/虚→"对本命（X）：无吞啖之涉"（猪 vs 鼠正确——鼠食胃昴猿不食猪）→ 按钮变
+  "本命主星：虚（点击修改）"。设置/重算/显示链路全通。
+- IAP 沙盒联调仍挂起等联运协议（1001860002 应用级未授权，代码就绪等放行）。
+
 ### 2026-09-26：IAP 集成完成 + 沙盒联调受阻于协议（等待华为）
 
 - **IAP 集成 v1 全部就位**：`utils/Purchases.ets`（queryProducts/createPurchase/queryPurchases
