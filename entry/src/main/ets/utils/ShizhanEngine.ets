@@ -1,4 +1,4 @@
-import { Animal } from '../model/Types';
+import { Animal, InteractionRule, InteractionsData } from '../model/Types';
 
 const STAR_ORDER: string[] = [
   "角", "亢", "氐", "房", "心", "尾", "箕",
@@ -36,6 +36,13 @@ export interface PalaceAffinityData {
   groups: PalaceGroup[];
 }
 
+/** 彼我吞啖判定结果 */
+export interface InteractionVerdict {
+  favorable: string;   // 吉（时禽克彼）/ 凶（彼克时禽）/ 平（无吞啖关系）
+  text: string;        // 白话描述
+  origin: string;      // 判定来源（吞啖表 / 歌诀）
+}
+
 /** 时占判定输入 */
 export interface ShizhanInput {
   hourStar: Animal;   // 时禽（calcHourStar 起盘所得）
@@ -66,13 +73,16 @@ export class ShizhanEngine {
   private static palaceData: PalaceAffinityData | null = null;
   private static seasonal: Record<string, Record<string, string[]>> | null = null;
   private static animals: Animal[] = [];
+  private static interactions: InteractionsData | null = null;
 
   public static init(table: HourStarTable, palace: PalaceAffinityData,
-                     seasonal: Record<string, Record<string, string[]>>, animals: Animal[]): void {
+                     seasonal: Record<string, Record<string, string[]>>, animals: Animal[],
+                     interactions?: InteractionsData): void {
     ShizhanEngine.table = table;
     ShizhanEngine.palaceData = palace;
     ShizhanEngine.seasonal = seasonal;
     ShizhanEngine.animals = animals;
+    ShizhanEngine.interactions = interactions ?? null;
   }
 
   private static getAnimal(star: string): Animal {
@@ -176,5 +186,119 @@ export class ShizhanEngine {
     }
     v.strength = strength === "" ? "休" : strength;
     return v;
+  }
+
+  /**
+   * 彼我吞啖（简断）：时禽 vs 彼星（问事当日值日禽，或用户本命主星）。
+   * 口径：《禽星易见》"常将日禽寻时禽……看与将星上下相合"、"时禽克日禽主快"——
+   * 时禽克彼为吉（我制彼，事可成），彼克时禽为凶；无吞啖关系为平。
+   * 逻辑与 YanQinEngine.checkInteraction 同源（吞啖表+歌诀+季节昼夜修正）。
+   */
+  public static judgeInteraction(hourStar: Animal, otherStar: Animal,
+                                 lunarMonth: number, isDay: boolean): InteractionVerdict | null {
+    const it = ShizhanEngine.interactions;
+    if (it === null) {
+      return null;
+    }
+    const ruleA = it.relationships.find(r => ShizhanEngine.starInRule(r, hourStar));
+    const ruleB = it.relationships.find(r => ShizhanEngine.starInRule(r, otherStar));
+    // 时禽吃彼
+    if (ruleA && ruleA.eats.some(prey => ShizhanEngine.animalMatches(prey, otherStar))) {
+      const mod = ShizhanEngine.modifier(ruleA.note ?? '', lunarMonth, isDay);
+      const v: InteractionVerdict = {
+        favorable: '吉',
+        text: `时禽${hourStar.star}制${otherStar.star}，我强彼弱${mod !== '' ? '（' + mod + '）' : ''}，所求可成。`,
+        origin: '吞啖表'
+      };
+      return v;
+    }
+    // 彼吃时禽
+    if (ruleB && ruleB.eats.some(prey => ShizhanEngine.animalMatches(prey, hourStar))) {
+      const mod = ShizhanEngine.modifier(ruleB.note ?? '', lunarMonth, isDay);
+      const v: InteractionVerdict = {
+        favorable: '凶',
+        text: `${otherStar.star}制时禽${hourStar.star}，彼强我弱${mod !== '' ? '（' + mod + '）' : ''}，事宜缓图。`,
+        origin: '吞啖表'
+      };
+      return v;
+    }
+    // 时禽惧彼
+    if (ruleA && ruleA.fears.some(prey => ShizhanEngine.animalMatches(prey, otherStar))) {
+      const mod = ShizhanEngine.modifier(ruleA.note ?? '', lunarMonth, isDay);
+      const v: InteractionVerdict = {
+        favorable: '凶',
+        text: `时禽${hourStar.star}畏${otherStar.star}${mod !== '' ? '（' + mod + '）' : ''}，其势不利，勿强出头。`,
+        origin: '吞啖表'
+      };
+      return v;
+    }
+    // 彼惧时禽
+    if (ruleB && ruleB.fears.some(prey => ShizhanEngine.animalMatches(prey, hourStar))) {
+      const mod = ShizhanEngine.modifier(ruleB.note ?? '', lunarMonth, isDay);
+      const v: InteractionVerdict = {
+        favorable: '吉',
+        text: `${otherStar.star}畏时禽${hourStar.star}，我势得位${mod !== '' ? '（' + mod + '）' : ''}，主动在我。`,
+        origin: '吞啖表'
+      };
+      return v;
+    }
+    // 歌诀补充
+    for (const rule of it.verse_rules) {
+      if (rule.predator.some(p => ShizhanEngine.animalMatches(p, hourStar))
+        && rule.prey.some(p => ShizhanEngine.animalMatches(p, otherStar))) {
+        const v: InteractionVerdict = {
+          favorable: '吉',
+          text: `时禽${hourStar.star}制${otherStar.star}（歌诀），所求可成。`,
+          origin: '歌诀'
+        };
+        return v;
+      }
+      if (rule.predator.some(p => ShizhanEngine.animalMatches(p, otherStar))
+        && rule.prey.some(p => ShizhanEngine.animalMatches(p, hourStar))) {
+        const v: InteractionVerdict = {
+          favorable: '凶',
+          text: `${otherStar.star}制时禽${hourStar.star}（歌诀），事宜缓图。`,
+          origin: '歌诀'
+        };
+        return v;
+      }
+    }
+    const none: InteractionVerdict = {
+      favorable: '平',
+      text: '时禽与彼无吞啖之涉，各安其位。',
+      origin: ''
+    };
+    return none;
+  }
+
+  private static starInRule(rule: InteractionRule, animal: Animal): boolean {
+    return rule.star.includes(animal.star) || rule.star.includes(animal.animal)
+      || rule.star.includes(animal.full_name);
+  }
+
+  private static animalMatches(key: string, animal: Animal): boolean {
+    return key.includes(animal.star) || key.includes(animal.animal)
+      || key.includes(animal.full_name);
+  }
+
+  /** 季节/昼夜修正词（与 YanQinEngine.applyNoteModifier 同源） */
+  private static modifier(note: string, lunarMonth: number, isDay: boolean): string {
+    const mods: string[] = [];
+    if (note.includes('夜生不忌') && !isDay) {
+      mods.push('夜生不忌');
+    }
+    if (note.includes('春夏减半') && lunarMonth >= 1 && lunarMonth <= 6) {
+      mods.push('春夏减半');
+    }
+    if (note.includes('秋冬不忌') && lunarMonth >= 7 && lunarMonth <= 12) {
+      mods.push('秋冬不忌');
+    }
+    if (note.includes('冬不忌') && lunarMonth >= 10 && lunarMonth <= 12) {
+      mods.push('冬不忌');
+    }
+    if (note.includes('四孟') && (lunarMonth === 1 || lunarMonth === 4 || lunarMonth === 7 || lunarMonth === 10)) {
+      mods.push('四孟减半');
+    }
+    return mods.join('·');
   }
 }

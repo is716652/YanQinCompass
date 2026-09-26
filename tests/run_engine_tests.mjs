@@ -376,7 +376,7 @@ section('F. 时占引擎（时禽起例 + 喜忌宫）');
 {
   const hsTable = readJson('hour_star_table.json');
   const palaceData = readJson('palace_affinity.json');
-  ShizhanEngine.init(hsTable, palaceData, seasonal, animals);
+  ShizhanEngine.init(hsTable, palaceData, seasonal, animals, interactions);
   const ZHI12 = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 
   // F1 元表完整性：7 元 × 7 曜，行 = C 循环移位（曜序+元号-1）
@@ -442,6 +442,27 @@ section('F. 时占引擎（时禽起例 + 喜忌宫）');
   assert(DayStarUtils.calc(1984, 2, 2).yuan === 1 && DayStarUtils.calc(1984, 2, 2).cycleDayIndex === 0,
     '锚点 1984-02-02 = 一元 / 日序 0');
   assert(DayStarUtils.calc(1984, 4, 2).yuan === 2, '锚点 1984-04-02 = 二元（60 日换元）');
+
+  // F8 彼我吞啖（古籍锚点：interactions.json 首条"子天鼠 eats 蝠/燕/胃/昴/猿"）
+  // 时禽胃土雉（被鼠食）vs 彼星虚日鼠 → 彼克我 = 凶；反向 = 吉
+  const preyA = { star: '胃', full_name: '胃土雉', element: '土', animal: '雉' };
+  const ratA = { star: '虚', full_name: '虚日鼠', element: '日', animal: '鼠' };
+  const ia = ShizhanEngine.judgeInteraction(preyA, ratA, 1, true);
+  assert(ia !== null && ia.favorable === '凶', `吞啖锚点 虚鼠食胃雉=凶（得 ${ia?.favorable}）`);
+  const ib = ShizhanEngine.judgeInteraction(ratA, preyA, 1, true);
+  assert(ib !== null && ib.favorable === '吉', `吞啖锚点 虚鼠制胃雉=吉（得 ${ib?.favorable}）`);
+  // 无关系为平：角木蛟 vs 轸水蚓
+  const ic = ShizhanEngine.judgeInteraction(
+    { star: '角', full_name: '角木蛟', element: '木', animal: '蛟' },
+    { star: '轸', full_name: '轸水蚓', element: '水', animal: '蚓' }, 1, true);
+  assert(ic !== null && ic.favorable === '平', `无吞啖关系=平（得 ${ic?.favorable}）`);
+  // 歌诀锚点：verse_rules 首条 predator 虎/豹 prey 牛/羊——时禽尾火虎 vs 彼星牛金牛 = 吉
+  // （吞啖表与歌诀双命中时表优先；断言重点在"我制彼=吉"）
+  const id2 = ShizhanEngine.judgeInteraction(
+    { star: '尾', full_name: '尾火虎', element: '火', animal: '虎' },
+    { star: '牛', full_name: '牛金牛', element: '金', animal: '牛' }, 1, true);
+  assert(id2 !== null && id2.favorable === '吉' && ['吞啖表', '歌诀'].includes(id2.origin),
+    `歌诀锚点 虎制牛=吉（得 ${id2?.favorable}/${id2?.origin}）`);
 }
 
 
