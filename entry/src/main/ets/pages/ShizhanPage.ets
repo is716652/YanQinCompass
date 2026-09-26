@@ -7,6 +7,7 @@ import { DayStarResult, DayStarUtils } from '../utils/DayStarUtils';
 import { HourStarTable, PalaceAffinityData, ShizhanEngine, ShizhanVerdict } from '../utils/ShizhanEngine';
 import { ShizhanSummary } from '../utils/ShizhanSummary';
 import { CalendarDay } from '../model/Types';
+import { Purchases } from '../utils/Purchases';
 
 /** 十二时辰（rep = 昼夜判定代表小时，与引擎 5-18 昼口径一致） */
 interface ShichenItem {
@@ -48,6 +49,7 @@ struct ShizhanPage {
   @State summary: string = '';
   @State freeLeft: number = FREE_LIMIT;
   @State limitHit: boolean = false;
+  @State premium: boolean = false;
   @StorageProp('statusBarPx') statusBarPx: number = 0;
   @StorageProp('navBarPx') navBarPx: number = 0;
   private dayRes: DayStarResult | null = null;
@@ -59,6 +61,10 @@ struct ShizhanPage {
     this.shichenIndex = ShizhanPage.nowShichen(d.getHours());
     this.freeLeft = FREE_LIMIT - ShizhanPage.usedToday();
     const context = getContext(this) as common.UIAbilityContext;
+    Purchases.init(context);
+    Purchases.refreshOwned().then((owned: boolean) => {
+      this.premium = owned;
+    });
     const loader = new DataLoader(context);
     this.loadData(loader, d);
   }
@@ -104,7 +110,7 @@ struct ShizhanPage {
     if (!this.loaded || this.dayRes === null) {
       return;
     }
-    if (this.freeLeft <= 0) {
+    if (!this.premium && this.freeLeft <= 0) {
       this.limitHit = true;
       return;
     }
@@ -126,10 +132,12 @@ struct ShizhanPage {
     this.result = v;
     this.summary = ShizhanSummary.build(star, sc.zhi, v, this.season);
     this.limitHit = false;
-    const d = new Date();
-    AppStorage.setOrCreate<string>('shizhanFreeDate', `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
-    AppStorage.setOrCreate<number>('shizhanFreeCount', ShizhanPage.usedToday() + 1);
-    this.freeLeft = FREE_LIMIT - ShizhanPage.usedToday();
+    if (!this.premium) {
+      const d = new Date();
+      AppStorage.setOrCreate<string>('shizhanFreeDate', `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`);
+      AppStorage.setOrCreate<number>('shizhanFreeCount', ShizhanPage.usedToday() + 1);
+      this.freeLeft = FREE_LIMIT - ShizhanPage.usedToday();
+    }
   }
 
   build() {
@@ -245,32 +253,43 @@ struct ShizhanPage {
         .borderRadius(16)
 
         // 起盘按钮
-        Button(this.freeLeft > 0 ? ' ⟡ 起盘断此时' : '今日免费盘数已用完')
+        Button(this.premium ? ' ⟡ 起盘断此时' : (this.freeLeft > 0 ? ' ⟡ 起盘断此时' : '今日免费盘数已用完'))
           .width('100%')
           .height(48)
           .fontSize(17)
           .fontWeight(FontWeight.Medium)
           .type(ButtonType.Capsule)
-          .backgroundColor(this.freeLeft > 0 ? $r('app.color.cinnabar') : $r('app.color.ink_secondary'))
+          .backgroundColor((this.premium || this.freeLeft > 0) ? $r('app.color.cinnabar') : $r('app.color.ink_secondary'))
           .fontColor(Color.White)
           .onClick(() => {
             this.onDivine();
           })
-        Text(`今日剩余免费盘数 ${this.freeLeft}/${FREE_LIMIT} · 完整时占功能即将开放`)
+        Text(this.premium ? '已解锁完整时占 · 不限次起盘' : `今日剩余免费盘数 ${this.freeLeft}/${FREE_LIMIT} · 完整时占功能即将开放`)
           .fontSize(10)
           .fontColor($r('app.color.ink_secondary'))
           .width('100%')
 
         // 结果 / 锁定提示
         if (this.limitHit) {
-          Column({ space: 8 }) {
+          Column({ space: 10 }) {
             Text('⏳ 今日免费盘数已用完')
               .fontSize(16)
               .fontWeight(FontWeight.Bold)
               .fontColor($r('app.color.ink_primary'))
-            Text('明日再来，或等待完整时占功能开放。')
+            Text('明日再来，或解锁完整时占（不限次起盘）。')
               .fontSize(13)
               .fontColor($r('app.color.ink_secondary'))
+            Button('解锁完整时占')
+              .width('100%')
+              .height(46)
+              .fontSize(16)
+              .backgroundColor($r('app.color.cinnabar'))
+              .fontColor(Color.White)
+              .onClick(() => {
+                router.pushUrl({ url: 'pages/PaywallPage' }).catch((err: Error) => {
+                  console.error('Failed to push url:', err.message);
+                });
+              })
           }
           .alignItems(HorizontalAlign.Start)
           .width('100%')

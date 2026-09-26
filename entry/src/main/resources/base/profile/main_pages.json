@@ -10,6 +10,7 @@
     "pages/Legal/UserAgreement",
     "pages/ClassicReaderPage",
     "pages/AlgorithmNotesPage",
-    "pages/ShizhanPage"
+    "pages/ShizhanPage",
+    "pages/PaywallPage"
   ]
 }
